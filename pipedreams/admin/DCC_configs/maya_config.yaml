@@ -1,0 +1,10 @@
+# Maya config for maya tools
+
+
+
+# Capture tool
+create_overlay: True
+overlay_position: "bottom_left"
+overlay_size: "500"
+overlay_image_dir: "D:\\work\\projects\\dev\\projects\\PIPEDREAMS\\PipeDreams\\pipeline\\resources\\logo"
+image_to_overlay: "logo_man.png"

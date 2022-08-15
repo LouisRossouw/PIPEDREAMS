@@ -1,0 +1,12 @@
+cmd_line:
+1 - install redline python package and change a line of code, refer to png
+
+
+Maya:
+(to use pip for Maya:   mayapy -m pip install pillow   )
+1 - every PC needs ffmpeg
+2 - Pillow library must be installed in Mayas python packages for every user
+
+windows system tray icon:
+1 - make a shortuct / python / exe file and copy and paste it to here - C:\Users\louro\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+    windows will load it at startup

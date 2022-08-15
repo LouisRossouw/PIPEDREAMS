@@ -1,0 +1,11 @@
+# Config to the Discord PipeDreams Bot
+
+
+
+ACTIVE: True
+DISCORD_GUILD: BoxBloxx
+CHECK_PROJECT_EVERY: 5
+
+# Post to Discord:
+POST_CAPTURES: True
+POST_EXPORTS: True

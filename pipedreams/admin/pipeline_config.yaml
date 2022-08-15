@@ -1,0 +1,28 @@
+# Launch config
+
+
+# This config forces the start_cmd_dev / production.py to use a specific version of the pipeline build, 
+# IF the variable is left blank "", then the start tool will automatically use the latest version, if the variable is specific, then 
+# the start will use the specific version of the pipeline build
+# v1.0.0 or ""
+
+development_build : ""
+production_build : ""
+
+Pipeline_name: 'PIPEDREAMS'
+Pipeline_Path: "D:\\work\\projects\\3D\\projects"
+
+user_name: "louis"
+
+maya_version: 2022
+houdini_version: 19.0.383
+
+# UI Start
+only_PipeDreams_Projects: True # Only list projects created with PipeDreams
+
+
+create_overlay: True
+overlay_position: "bottom_left"
+overlay_size: "800"
+overlay_image_dir: "C:\\custom_program_files\\PipeDreams\\PipeDreams\\cmd_line\\resources\\logo"
+image_to_overlay: "logo_name.png"

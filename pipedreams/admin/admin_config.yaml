@@ -1,0 +1,24 @@
+
+
+
+# Admin 
+
+#Tivoli Access Manager Administrator. The Tivoli Access Manager administrator is a member of the iv-admin group. The Tivoli Access Manager administrator can perform all delegate administration functions.
+#Domain Administrator. The domain administrator can perform administrative functions for the users in their domain. Domain administrators can create new users and administrators in their own domain, and assign an existing domain user to be an administrator (of any type except domain administrator) for the domain.
+#Senior Administrator. A senior administrator has the same authority as a domain administrator, except that a senior administrator cannot assign additional administrators.
+#Administrator. An administrator has the same authority as a senior administrator, except that an administrator cannot create new domain users. An administrator can modify an existing user's properties.
+#Support Administrator. A support administrator serves the user in a help desk role and is able to view users' properties, change users' passwords, and modify the Is Password Valid? flags for users.
+
+
+Admin : {
+              Tivoli  : [LOURO],
+
+              Domain : [],
+
+              Senior : [],
+
+              Administrator : [],
+
+              Support_Administrator : []
+
+        }
