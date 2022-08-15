@@ -4,19 +4,14 @@ import os
 
 
 applications_list = ["maya.exe"]
-
-
 search_taskManager = os.popen('wmic process get description, processid').read()
 
 
 for app in applications_list:
 
-    print(app)
-
     foundPID = search_taskManager.find(app)
 
-    # print(app, " - ", foundPID)
-
+    print(app, " - ", foundPID)
 
     # HIGH_PRIORITY_CLASS
 
