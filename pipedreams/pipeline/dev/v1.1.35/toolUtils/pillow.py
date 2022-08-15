@@ -98,13 +98,13 @@ def composit_sequence(image_sequence_dir):
 
 
     FPS = capture_data_manifest["capture_data"]["FPS"]
-    PROJECT = capture_data_manifest["capture_data"]["project"]
-    USER = capture_data_manifest["capture_data"]["user"]
-    COMMENT = capture_data_manifest["capture_data"]["comment"]
-    FOCAL_LENS = capture_data_manifest["capture_data"]["focal_lens"]
-    VERSION = capture_data_manifest["capture_data"]["version"]
-    RANGE = capture_data_manifest["capture_data"]["range"]
-    RESOLUTION = capture_data_manifest["capture_data"]["Resolution"]
+    PROJECT = capture_data_manifest["capture_data"]["PROJECT"]
+    USER = capture_data_manifest["capture_data"]["USER"]
+    COMMENT = capture_data_manifest["capture_data"]["COMMENT"]
+    FOCAL_LENS = capture_data_manifest["capture_data"]["FOCAL_LENS"]
+    VERSION = capture_data_manifest["capture_data"]["VERSION"]
+    RANGE = capture_data_manifest["capture_data"]["RANGE"]
+    RESOLUTION = capture_data_manifest["capture_data"]["RESOLUTION"]
 
     count = 0
     for image in image_sequence:
@@ -184,14 +184,14 @@ if __name__ == "__main__":
 
     data = {}
     data["capture_data"] = {
-                            "Resolution": ["2.35:1", 1920, 818],
-                            "range": [1, 100],
+                            "RESOLUTION": ["2.35:1", 1920, 818],
+                            "RANGE": [1, 100],
                             "FPS": 25,
-                            "project": "boxx_dev_bxx_010",
-                            "user": "LOURO",
-                            "comment": "this is still a WIP!",
-                            "focal_lens": 135,
-                            "version": "v007",
+                            "PROJECT": "boxx_dev_bxx_010",
+                            "USER": "LOURO",
+                            "COMMENT": "this is still a WIP!",
+                            "FOCAL_LENS": 135,
+                            "VERSION": "v007",
 
                             "OVERLAY": True,
                             "PUBLISH": True,

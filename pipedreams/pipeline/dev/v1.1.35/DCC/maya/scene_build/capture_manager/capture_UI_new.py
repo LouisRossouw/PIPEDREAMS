@@ -61,15 +61,23 @@ def write_capture_data(capture_name,
         data = {}
 
         data[capture_name] = {version_eval: {
+                                            "RESOLUTION": ["2.35:1", cmds.getAttr("defaultResolution.width"), cmds.getAttr("defaultResolution.width")],
+                                            "FPS": cmds.currentUnit(query=True, time=True),
+                                            "FOCAL_LENS": 135,
+                                            "VERSION": version_eval,
                                             "PROJECT": project,
                                             "PROJECT_NAME": project_name,
-                                            "TASK": task_name, 
-                                            "START": start_number, 
+                                            "TASK": task_name,
+                                            "START": start_number,
                                             "END": end_number,
+                                            "RANGE": [start_number, end_number],
                                             "COMMENT": comment_eval,
-                                            "POSTED_TO_DISCORD": False,
                                             "USER": userName,
                                             "PATH": export_path_eval + "/" + task_name + "/" + capture_name + "/" + version_eval,
+
+                                            "POSTED_TO_DISCORD": False,
+                                            "OVERLAY": True,
+                                            "PUBLISH": True,
                                             }}
 
         write_to_json(JSON_CAPTURE, data)
@@ -77,18 +85,29 @@ def write_capture_data(capture_name,
         data = read_json(JSON_CAPTURE)
         project_name = os.getenv("PROJECT_NAME")
         data[capture_name] = {version_eval: {
+                                            "RESOLUTION": ["2.35:1", cmds.getAttr("defaultResolution.width"), cmds.getAttr("defaultResolution.width")],
+                                            "FPS": cmds.currentUnit(query=True, time=True),
+                                            "FOCAL_LENS": 135,
+                                            "VERSION": version_eval,
                                             "PROJECT": project,
                                             "PROJECT_NAME": project_name,
                                             "TASK": task_name, 
-                                            "START": start_number, 
+                                            "START": start_number,
                                             "END": end_number,
+                                            "RANGE": [start_number, end_number],
                                             "COMMENT": comment_eval,
-                                            "POSTED_TO_DISCORD": False,
                                             "USER": userName,
                                             "PATH": export_path_eval + "/" + task_name + "/" + capture_name + "/" + version_eval,
+
+                                            "POSTED_TO_DISCORD": False,
+                                            "OVERLAY": True,
+                                            "PUBLISH": True,
                                             }}
 
         write_to_json(JSON_CAPTURE, data)
+
+        capture_data_path = export_path_eval + "/" + task_name + "/" + capture_name + "/" + version_eval + "/capture_data_manifest.json"
+        write_to_json(capture_data_path, data)
 
 
 # This is the UI that gets created
@@ -152,6 +171,13 @@ def capture_UI():
 
     main_dir_path = os.getenv('PROJECT_NAME')
     shot = os.getenv('SHOT')
+
+
+    def write_out_data(*args):
+        """ Writes out a json file of the captures data """
+
+
+
 
 
     def get_capture_items(*args):
