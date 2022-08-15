@@ -44,7 +44,7 @@ def get_resolution(capture_data_manifest):
         output resolution to accomodate the overlay crops + data.
     """
 
-    aspect_ratio = capture_data_manifest["capture_data"]["Resolution"][0]
+    aspect_ratio = capture_data_manifest["capture_data"]["RESOLUTION"][0]
 
     if aspect_ratio == "2.35:1":
         base_resolution = 1920, 818
@@ -86,6 +86,8 @@ def composit_sequence(image_sequence_dir):
     # Overlay Color
     OVERLAY_COLOR = 0,0,0
     OVERLAY_TRANSPARENCY = 50
+
+    logo_path = "D:/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.jpg"
 
     image_sequence = os.listdir(image_sequence_dir)
 
@@ -179,8 +181,8 @@ def composit_sequence(image_sequence_dir):
 if __name__ == "__main__":
 
     logo_path = "D:/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.jpg"
-    image_sequence_dir = "D:/work/projects/3D/projects/boxx/dev/shots/bxx_010/captures/anim/bxx_010/v006"
-    output = "D:/work/projects/3D/projects/boxx/dev/shots/bxx_010/captures/anim/bxx_010/v007"
+    image_sequence_dir = "D:/work/projects/3D/projects/boxx/dev/shots/bxx_010/captures/anim/bxx_010/v014"
+    output = "D:/work/projects/3D/projects/boxx/dev/shots/bxx_010/captures/anim/bxx_010/v014"
 
     data = {}
     data["capture_data"] = {
@@ -204,4 +206,4 @@ if __name__ == "__main__":
 
 
 
-    png_to_vid(output + "/anim_bxx_010_v006", output + "/test.mp4")
+    png_to_vid(output + "/anim_bxx_010_v014", output + "/test.mp4")

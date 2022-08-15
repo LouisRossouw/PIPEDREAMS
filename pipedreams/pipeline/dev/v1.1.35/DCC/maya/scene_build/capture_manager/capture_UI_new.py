@@ -61,7 +61,7 @@ def write_capture_data(capture_name,
         data = {}
 
         data[capture_name] = {version_eval: {
-                                            "RESOLUTION": ["2.35:1", cmds.getAttr("defaultResolution.width"), cmds.getAttr("defaultResolution.width")],
+                                            "RESOLUTION": ["2.35:1", cmds.getAttr("defaultResolution.width"), cmds.getAttr("defaultResolution.height")],
                                             "FPS": cmds.currentUnit(query=True, time=True),
                                             "FOCAL_LENS": 135,
                                             "VERSION": version_eval,
@@ -171,10 +171,6 @@ def capture_UI():
 
     main_dir_path = os.getenv('PROJECT_NAME')
     shot = os.getenv('SHOT')
-
-
-    def write_out_data(*args):
-        """ Writes out a json file of the captures data """
 
 
 

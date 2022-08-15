@@ -1,9 +1,15 @@
 import os
 import imp
+import sys
 import maya.cmds as cmds
 
 import scene_build.export_manager.export_utils as utils
 import scene_build.capture_manager.overlay as overlay
+
+PipeDreams_root_path = os.getenv('PIPELINE_ROOT')
+sys.path.append(PipeDreams_root_path)
+
+import toolUtils.pillow as pillow_layer
 
 
 
@@ -106,13 +112,14 @@ def capture_view(dir_name,
     # mp4 video
     if selected_output == 'mp4':
 
-        file_saveName = path_to_new_dir + '/' + export_version_name + '/' + task_name + '_' + filename + '_' + export_version_name + '.mov'
+        file_saveName = path_to_new_dir + '/' + export_version_name + '/' + filename + '_' + task_name + '_' + export_version_name + '_'
+        file_saveName_02 = path_to_new_dir + '/' + export_version_name + '/' + filename + '_' + task_name + '_' + export_version_name
 
         print('writing to : ')
         print(file_saveName)
 
         # playblast
-        cmds.playblast(format='qt',
+        cmds.playblast(format='image',
                         filename= file_saveName,
                         sequenceTime=0,
                         clearCache=1,
@@ -120,7 +127,7 @@ def capture_view(dir_name,
                         showOrnaments=0,
                         fp=4,
                         percent=100,
-                        compression="MPEG-4 Video",
+                        compression="png",
                         quality=100,
                         widthHeight=[get_width,get_height],
                         )
@@ -129,12 +136,15 @@ def capture_view(dir_name,
         cmds.camera(camera + 'Shape', e=1, displayFilmGate=camGate_eval)
         cmds.camera(camera + 'Shape', e=1, displayResolution=camRes_eval)
 
-        # compress and convert to .mp4
+        # # compress and convert to .mp4
         capture_file = '"' + file_saveName + '"'
         compressed_capture = path_to_new_dir + '/' + export_version_name + '/' + shot + '_' + filename + '_' + task_name + '_' + export_version_name + '.mp4'
 
-        # FFMPEG cmd line
-        os.system('ffmpeg -i ' + str(capture_file) + ' -vf scale=' + res + ' -y ' + str(compressed_capture))
+        pillow_layer.composit_sequence(path_to_new_dir + '/' + export_version_name)
+        pillow_layer.png_to_vid(file_saveName_02, compressed_capture)
+
+        # # FFMPEG cmd line
+        # os.system('ffmpeg -i ' + str(capture_file) + ' -vf scale=' + res + ' -y ' + str(compressed_capture))
 
         # add overlay
         if overlay_checkbox != False:
@@ -155,7 +165,7 @@ def capture_view(dir_name,
         else:
             pass
 
-        os.remove(file_saveName)
+        #os.remove(file_saveName)
 
         file_saveName_path = path_to_new_dir + '/' + export_version_name + '/'
         os.system("start " + file_saveName_path)
