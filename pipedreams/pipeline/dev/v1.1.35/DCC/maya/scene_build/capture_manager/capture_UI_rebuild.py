@@ -1,22 +1,38 @@
 import os
 import sys
+import yaml
 
 import maya.cmds as cmds
 
-
+import scene_build.capture_manager.capture_util as capture_utils
 
 
 
 def capture_UI():
+    """ Starts up the capture UI """
+
+
+
+
+    def config_check():
+        """ checks project data config for info on the working project """
+
+        config_path = os.path.dirname(os.getenv("TOP_ASSETS")) + "/data/pipeline/pipeline_data.yaml"
+        config = yaml.safe_load(open(config_path))
+
+        return(config)
+
 
 
 
     def clearOptionMenu(optionMneu_path):
-        """ pass the optionmenu and it will clear all the items """
+        """ pass the optionMenu and it will clear all the items """
 
         # loop through existing menus in the optionMenu and destroy them
         for item in cmds.optionMenu(optionMneu_path, q=True, ill=True) or []:
             cmds.deleteUI(item)
+
+
 
 
     def versioning(path_to_dir):
@@ -59,10 +75,15 @@ def capture_UI():
     def update_version(*args):
         """ Updates version on capture name field change update """
 
-        input_name = args[0]
         captures_path = os.getenv("CAPTURES")
         UI_optionMenu_path = data["UI_version_menu"]
         UI_task_path = data["UI_task"]
+        UI_captureName_path = data["UI_captureName_path"]
+
+        try:
+            input_name = args[0]
+        except IndexError:
+            input_name = cmds.textField(UI_captureName_path, query=True, text=True)
 
         Task_name = cmds.optionMenu(UI_task_path, query=True, value=True)
 
@@ -73,11 +94,64 @@ def capture_UI():
         for v in versioning(path_to_capture_dir)[1]:
             cmds.menuItem(label=v, parent=UI_optionMenu_path)
 
-        # # changes the version option menu to whatever
-        # cmds.optionMenu(data["UI_version_menu"], edit=True, value="latet_version")
+
+
+
+    def UI_update_existing(*args):
+        """ Updates / populates the UI Existing optionMenu"""
+
+        UI_Existing_path = data["UI_Existing_path"]
+
+        try:
+            clearOptionMenu(UI_Existing_path)
+            task_dir = capture_path + "/" + cmds.optionMenu(UI_task_path, query=True, value=True)
+
+            for existing in os.listdir(task_dir):
+                cmds.menuItem(existing, parent=UI_Existing_path)
+
+        except Exception as e:
+            clearOptionMenu(UI_Existing_path)
+
+        update_version()
+
+
+
+
+    def UI_update_captureName(*args):
+        """ updates the Captures name text field on command change """
+
+        cmds.textField(UI_captureName_path, edit=True, text=args[0])
+
+
+
+
+    def capture_button(*args):
+        """ This button executes the capture with the required settings inputted on the UI """
+
+        capture_name_eval = cmds.textField(UI_captureName_path, query=True, text=True)
+        start_number_eval = cmds.intField(UI_start, query=True, value=True)
+        end_number_eval = cmds.intField(UI_end, query=True, value=True)
+        task_name_eval = cmds.optionMenu(UI_task_path, query=True, value=True)
+        export_path_eval = cmds.textField(UI_save_path, query=True, text=True)
+
+        #radio buttons
+        selected_output_group = cmds.radioCollection(output, query=True, sl=True)
+        selected_output = cmds.radioButton(selected_output_group, query=True, label=True)
+
+        UI_version_eval = cmds.optionMenu(UI_version_menu, query=True, value=True)
+
+        UI_publish_eval = cmds.checkBox(UI_publish, query=True, value=True)
+        UI_guides_eval = cmds.checkBox(UI_guides, query=True, value=True)
+        UI_GS_eval = cmds.checkBox(UI_GS, query=True, value=True)
+        UI_comment_eval = cmds.textField(UI_comment, query=True, text=True)
+
+        capture_utils.capture_run()
+
+
 
 # Build UI
 
+    config_data = config_check()
     data = {}
 
     if cmds.window('Capture_Manager', exists=True):
@@ -93,10 +167,10 @@ def capture_UI():
 
 
     cmds.text(label="Save_path:")
-    cmds.textField(text=os.getenv("CAPTURES"))
+    UI_save_path = cmds.textField(text=os.getenv("CAPTURES"))
 
     cmds.text(label="Task:")
-    UI_task_path = cmds.optionMenu()
+    UI_task_path = cmds.optionMenu(changeCommand=UI_update_existing)
     cmds.menuItem("anim")
     cmds.menuItem("previz")
 
@@ -107,29 +181,28 @@ def capture_UI():
 # Capture naming
     cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(150, 20) )
 
+    capture_path = os.getenv("CAPTURES")
     cmds.text(label="Existing:")
 
-    cmds.optionMenu()
-    cmds.menuItem("bxx_010")
+    UI_Existing_path = cmds.optionMenu(changeCommand=UI_update_captureName)
+    # UI_update_existing(UI_Existing_path)
+
     cmds.text(label="Capture Name:")
-    cmds.textField(text=os.getenv("SHOT"), changeCommand=update_version)
+    UI_captureName_path = cmds.textField(text=os.getenv("SHOT"), changeCommand=update_version)
     cmds.text(label="Version:")
     UI_version_menu = cmds.optionMenu()
-    # cmds.menuItem("v001")
-
-
-
 
     cmds.setParent( '..' )
     cmds.separator(height=10, style='in')
+
 
 # frame ranges
     cmds.gridLayout(numberOfColumns=2, cellWidthHeight=(150, 20))
 
     cmds.text(label="Start:")
-    cmds.textField(text=int(cmds.playbackOptions(q=True, min=True)))
+    UI_start = cmds.intField(value=int(cmds.playbackOptions(q=True, min=True)))
     cmds.text(label="End:")
-    cmds.textField(text=int(cmds.playbackOptions(q=True, max=True)))
+    UI_end = cmds.intField(value=int(cmds.playbackOptions(q=True, max=True)))
 
     cmds.setParent('..')
     cmds.separator(height=10, style='in')
@@ -138,9 +211,9 @@ def capture_UI():
 # Options
     cmds.gridLayout(numberOfColumns=5, cellWidthHeight=(70, 20))
 
-    cmds.checkBox("Publish")
-    cmds.checkBox("Guides")
-    cmds.checkBox("GS")
+    UI_publish = cmds.checkBox("Publish", value=config_data["Publisher"])
+    UI_guides = cmds.checkBox("Guides", value=config_data["Guides"])
+    UI_GS = cmds.checkBox("GS")
 
     output = cmds.radioCollection()
     mp4 = cmds.radioButton(label='mp4', select=True)
@@ -152,18 +225,23 @@ def capture_UI():
 
 # comments
     cmds.text(label='comment:')
-    comment = cmds.textField()
+    UI_comment = cmds.textField()
 
     # Creates Capture
-    cmds.button(label='Capture',bgc=(0.65, 1, 0))
+    cmds.button(label='Capture',bgc=(0.65, 1, 0), command=capture_button)
 
 
 # Add menu path to dictionary
     data["UI_version_menu"] = UI_version_menu
     data["UI_task"] = UI_task_path
-
+    data["UI_captureName_path"] = UI_captureName_path
+    data["UI_Existing_path"] = UI_Existing_path
+    data["UI_comment"] = UI_comment
 
     cmds.showWindow(window)
+
+
+
 
 
 if __name__ == '__main__':

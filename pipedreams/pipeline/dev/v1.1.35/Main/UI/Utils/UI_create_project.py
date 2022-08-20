@@ -22,7 +22,9 @@ def create_config(pipeline_path,
                     resolution,
                     aspect_ration,
                     FPS,
-                    discord_sync
+                    discord_sync,
+                    Publisher,
+                    Guides
                     ):
     """ This creates a yaml config file for pipeline_type """
 
@@ -49,7 +51,9 @@ def create_config(pipeline_path,
             "Resolution" : res,
             "ASPR" : aspect_ration,
             "FPS" : FPS,
-            "discord_sync": discord_sync
+            "discord_sync": discord_sync,
+            "Publisher": Publisher,
+            "Guides": Guides
             }
 
 
@@ -84,7 +88,10 @@ def build_project(
                     resolution,
                     aspect_ration,
                     FPS,
-                    discord_sync
+
+                    discord_sync,
+                    Publisher,
+                    Guides
 
                   ):
     """ Builds the file structure for a project based on either pipeline_A structure or pipeline_B structure"""
@@ -130,7 +137,9 @@ def build_project(
                     resolution,
                     aspect_ration,
                     FPS,
-                    discord_sync
+                    discord_sync,
+                    Publisher,
+                    Guides
                     )
 
 
@@ -246,8 +255,9 @@ def UI(config, icon_1):
                 [sg.Push(),sg.Text("FPS: "), sg.InputCombo(('24','25','30','60'), key="FPS",)], 
                 [sg.Push(), sg.Text("Pipleline Type: "), sg.InputCombo(('pipe_a', 'pipe_b'), key="PIPELINE_TYPE")],
                 [sg.Text('_'  * 80)],
-                [sg.Push(), sg.Checkbox("Discord Sync: ", key="-DISCORD_SYNC-")],
-
+                [sg.Push(), sg.Checkbox("Discord Sync: ", key="-DISCORD_SYNC-"),
+                sg.Push(), sg.Checkbox("Publisher: ", key="-AUTO_PUBLISH-"),
+                sg.Push(), sg.Checkbox("Guides: ", key="-GUIDES-")],
 
                 [sg.Multiline(size=(60,15), font='Courier 8', expand_x=True, expand_y=True, write_only=True,
                             reroute_stdout=True, reroute_stderr=True, echo_stdout_stderr=True, autoscroll=True, auto_refresh=True, background_color="black",text_color="magenta", key="MULTI_TEXTBOX")],
@@ -296,7 +306,11 @@ def UI(config, icon_1):
         resolution = values["-RES-"]
         aspect_ration = values["-ASPR-"]
         FPS = values["FPS"]
+
         discord_sync = values["-DISCORD_SYNC-"]
+        Publisher = values["-AUTO_PUBLISH-"]
+        Guides = values["-GUIDES-"]
+
 
         if input_project_name != '':
 
@@ -312,7 +326,10 @@ def UI(config, icon_1):
                             resolution,
                             aspect_ration,
                             FPS,
-                            discord_sync
+
+                            discord_sync,
+                            Publisher,
+                            Guides
                         )
 
             # Pop up when done with window
@@ -344,6 +361,16 @@ def UI(config, icon_1):
                 print("✔️ Discord Sync: " + str(discord_sync))
             else:
                 print("❌ Discord Sync: " + str(discord_sync))
+
+            if Publisher == True:
+                print("✔️ Publisher: " + str(Publisher))
+            else:
+                print("❌ Publisher: " + str(Publisher))
+
+            if Guides == True:
+                print("✔️ Guides: " + str(Guides))
+            else:
+                print("❌ Guides: " + str(Guides))
 
             print(f"\n✔️{main_projects_path}/{input_project_name}/{input_sub_project_name}")
             
