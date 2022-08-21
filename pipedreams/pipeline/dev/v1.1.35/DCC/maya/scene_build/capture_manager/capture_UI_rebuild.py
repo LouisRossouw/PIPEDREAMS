@@ -149,9 +149,17 @@ def capture_UI():
 
 
 
-# Build UI
+# Builds UI
 
     config_data = config_check()
+
+    try:
+        publisher_active = config_data["Publisher"]
+        guides_active = config_data["Guides"]
+    except KeyError:
+        publisher_active = False
+        guides_active = False
+
     data = {}
 
     if cmds.window('Capture_Manager', exists=True):
@@ -211,8 +219,8 @@ def capture_UI():
 # Options
     cmds.gridLayout(numberOfColumns=5, cellWidthHeight=(70, 20))
 
-    UI_publish = cmds.checkBox("Publish", value=config_data["Publisher"])
-    UI_guides = cmds.checkBox("Guides", value=config_data["Guides"])
+    UI_publish = cmds.checkBox("Publish", value=publisher_active)
+    UI_guides = cmds.checkBox("Guides", value=guides_active)
     UI_GS = cmds.checkBox("GS")
 
     output = cmds.radioCollection()
