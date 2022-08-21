@@ -17,7 +17,7 @@ import toolUtils.pillow as pillow
 
 
 def write_to_json(json_path, data):
-    """ Create and write to json file """
+    """ Create and write to json file. """
 
     with open(json_path, 'w') as f:
         json.dump(data, f, indent=6)
