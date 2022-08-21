@@ -10,7 +10,7 @@ sys.path.append(main_path) # /PIPEDREAMS/PipeDreams
 
 
 def yaml_config(config_path):
-    """ Open yaml configs """
+    """ Open yaml configs. """
     config = yaml.safe_load(open(config_path))
     return(config)
 
