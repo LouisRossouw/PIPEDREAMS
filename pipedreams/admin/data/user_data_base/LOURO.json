@@ -1,12 +1,12 @@
 {
       "LOURO": {
-            "lastSeen": 1661110569.6002831,
+            "lastSeen": 1661117177.602113,
             "privilages": "Tivoli",
             "title": [
                   "animation"
             ],
-            "pipeline_version": "v1.1.35",
-            "pipeline_start_type": "D:\\work\\projects\\dev\\projects\\PIPEDREAMS\\PipeDreams\\pipeline\\dev/v1.1.35/Main/UI/UI_start_compact.pyw",
-            "pipeline_version_path": "D:\\work\\projects\\dev\\projects\\PIPEDREAMS\\PipeDreams\\pipeline\\dev\\v1.1.35"
+            "pipeline_version": "v1.1.36",
+            "pipeline_start_type": "D:\\work\\projects\\dev\\projects\\PIPEDREAMS\\PipeDreams\\pipeline\\production/v1.1.36/Main/UI/UI_start_compact.pyw",
+            "pipeline_version_path": "D:\\work\\projects\\dev\\projects\\PIPEDREAMS\\PipeDreams\\pipeline\\production/v1.1.36"
       }
 }
