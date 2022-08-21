@@ -118,5 +118,5 @@ def rocketothesky():
 
 
 if __name__ == '__main__':
-    test()
+    pass
     # rocketothesky()
