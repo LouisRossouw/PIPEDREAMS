@@ -1,5 +1,7 @@
 import os
 import json
+from pathlib import Path
+
 from PIL import Image, ImageFont, ImageDraw, ImageEnhance
 
 
@@ -39,12 +41,12 @@ def logo_position():
 
 
 
-def get_resolution(capture_data_manifest):
+def get_resolution(capture_data_manifest, version):
     """ Based on the original resolution of the capture from the DCC package, we adjust the output 
         output resolution to accomodate the overlay crops + data.
     """
 
-    aspect_ratio = capture_data_manifest["capture_data"]["RESOLUTION"][0]
+    aspect_ratio = capture_data_manifest["capture_data"][version]["RESOLUTION"][0]
 
     if aspect_ratio == "2.35:1":
         base_resolution = 1920, 818
@@ -68,7 +70,7 @@ def get_resolution(capture_data_manifest):
 
 
 
-def composit_sequence(image_sequence_dir):
+def composit_sequence(image_sequence_dir, json_manifest_path, version):
 
     FONT_SIZE = 15
     LOGO_SIZE = 50
@@ -87,7 +89,8 @@ def composit_sequence(image_sequence_dir):
     OVERLAY_COLOR = 0,0,0
     OVERLAY_TRANSPARENCY = 50
 
-    logo_path = "D:/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.jpg"
+    logo_path = str(Path(os.path.dirname(__file__)).parents[2]) + "/resources/captures/logo/pixl_400_400.jpg"
+
 
     image_sequence = os.listdir(image_sequence_dir)
 
@@ -96,17 +99,17 @@ def composit_sequence(image_sequence_dir):
     logo_size_width, logo_size_height = img_logo.size
 
     # Read the Captures data manifest file
-    capture_data_manifest = read_json(image_sequence_dir + "/capture_data_manifest.json")
+    capture_data_manifest = read_json(json_manifest_path)
 
 
-    FPS = capture_data_manifest["capture_data"]["FPS"]
-    PROJECT = capture_data_manifest["capture_data"]["PROJECT"]
-    USER = capture_data_manifest["capture_data"]["USER"]
-    COMMENT = capture_data_manifest["capture_data"]["COMMENT"]
-    FOCAL_LENS = capture_data_manifest["capture_data"]["FOCAL_LENS"]
-    VERSION = capture_data_manifest["capture_data"]["VERSION"]
-    RANGE = capture_data_manifest["capture_data"]["RANGE"]
-    RESOLUTION = capture_data_manifest["capture_data"]["RESOLUTION"]
+    FPS = capture_data_manifest["capture_data"][version]["FPS"]
+    PROJECT = capture_data_manifest["capture_data"][version]["PROJECT"]
+    USER = capture_data_manifest["capture_data"][version]["USER"]
+    COMMENT = capture_data_manifest["capture_data"][version]["COMMENT"]
+    FOCAL_LENS = capture_data_manifest["capture_data"][version]["FOCAL_LENS"]
+    VERSION = capture_data_manifest["capture_data"][version]["VERSION"]
+    RANGE = capture_data_manifest["capture_data"][version]["RANGE"]
+    RESOLUTION = capture_data_manifest["capture_data"][version]["RESOLUTION"]
 
     count = 0
     for image in image_sequence:
@@ -126,7 +129,7 @@ def composit_sequence(image_sequence_dir):
 
 
 # Blank 1080P resolution, this is the base
-            scaled_resolution = get_resolution(capture_data_manifest)
+            scaled_resolution = get_resolution(capture_data_manifest, version)
             blank_img = Image.new("RGB", (scaled_resolution[0], scaled_resolution[1]), (0,0,0))
 
 
@@ -164,7 +167,7 @@ def composit_sequence(image_sequence_dir):
 
 
 # Overlay
-            if capture_data_manifest["capture_data"]["OVERLAY"] == True:
+            if capture_data_manifest["capture_data"][version]["GUIDES"] == True:
                 draw.line((0, 250, 1920, 250), fill=(OVERLAY_COLOR[0],OVERLAY_COLOR[1],OVERLAY_COLOR[2], OVERLAY_TRANSPARENCY))
                 draw.line((0, 830, 1920, 830), fill=(OVERLAY_COLOR[0],OVERLAY_COLOR[1],OVERLAY_COLOR[2], OVERLAY_TRANSPARENCY))
                 draw.line((480, 0, 480, 1080), fill=(OVERLAY_COLOR[0],OVERLAY_COLOR[1],OVERLAY_COLOR[2], OVERLAY_TRANSPARENCY))
@@ -172,13 +175,15 @@ def composit_sequence(image_sequence_dir):
 
 
 
-            blank_img.save(f"{output}/{image}", "PNG")
+            save_path = f"{os.path.dirname(image_sequence_dir)}/comp/{image}"
+            blank_img.save(save_path, "PNG")
 
 
 
 
 
 if __name__ == "__main__":
+
 
     logo_path = "D:/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.jpg"
     image_sequence_dir = "D:/work/projects/3D/projects/boxx/dev/shots/bxx_010/captures/anim/bxx_010/v014"

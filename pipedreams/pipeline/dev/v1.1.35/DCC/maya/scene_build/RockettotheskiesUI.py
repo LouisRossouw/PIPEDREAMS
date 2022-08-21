@@ -9,7 +9,7 @@ import toolutils.QuickAnimSkin as QuickAnimSkin
 import toolutils.RandomHide as RandomHide
 import toolutils.StudioLib as StudioLib
 
-import scene_build.capture_manager.capture_UI_new as cap_UI
+import scene_build.capture_manager.capture_UI as cap_UI
 import scene_build.export_manager.export_Manager_UI as export_UI
 import scene_build.scene_manager.scene_manager_UI as scn_manager_UI
 

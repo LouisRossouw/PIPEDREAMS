@@ -18,7 +18,7 @@ def png_to_vid(path_to_png_sequence_input,
                ):
     """ This converts a png sequence to video / mp4, mov etc """
 
-    path = path_to_png_sequence_input + '_%d.png'
+    path = path_to_png_sequence_input + '.%04d.png'
     path_out = path_to_video_output + '.mp4'
 
     # uses ffmpeg to convert png seq to mp4
@@ -103,5 +103,8 @@ def maya_green_screen(path_to_png_sequence_input, name, selected_output):
 
 if __name__ == '__main__':
     name = 'anim_green_test_v001'
-    path_to_png_sequence_input = "C:\\Users\\louro\\Documents\\projects\\movies\\anim\\green_test\\v001"
-    maya_green_screen(path_to_png_sequence_input, name)
+    path_to_png_sequence_input = "D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v001/png_seq/comp/dv_010_anim_v001"
+    out = "D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v001/video/test.mp4"
+    # maya_green_screen(path_to_png_sequence_input, name)
+
+    png_to_vid(path_to_png_sequence_input, out)
