@@ -1,0 +1,12 @@
+{
+      "LOUIS": {
+            "lastSeen": 1661456779.7590814,
+            "privilages": "Tivoli",
+            "title": [
+                  "animation"
+            ],
+            "pipeline_version": "v1.1.36",
+            "pipeline_start_type": "C:\\work\\projects\\dev\\projects\\PIPEDREAMS\\PipeDreams\\pipeline\\dev/v1.1.36/Main/UI/UI_start_compact.pyw",
+            "pipeline_version_path": "C:\\work\\projects\\dev\\projects\\PIPEDREAMS\\PipeDreams\\pipeline\\dev\\v1.1.36"
+      }
+}

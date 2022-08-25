@@ -37,6 +37,7 @@ artist_config = utils.yaml_config(f"{main_path}/admin/artist_config.yaml")
 def check_admin(userNames):
     """ Checks the users in the data list """
 
+
     privilages = []
 
     for admin in admin_config["Admin"]:
