@@ -47,6 +47,10 @@ def updateModule():
         Documents_path += "/Documents"
 
     pipedreams_mod_path = f"{Documents_path}/maya/modules/PipeDreams.mod"
+    modules_dir_path = f"{Documents_path}/maya/modules"
+
+    if os.path.exists(modules_dir_path) != True:
+        os.mkdir(modules_dir_path)
 
     with open(pipedreams_mod_path, "w") as f:
 
@@ -55,7 +59,6 @@ def updateModule():
         text = f"+ PipeDreams {str(version)} {pipeline_path_to_version}\DCC\maya \nscripts: {pipeline_path_to_version}\DCC\maya"
         f.write(text)
 
-    #C:\custom_program_files\pipeline\PipeDreams\maya\scripts \nscripts: C:\custom_program_files\pipeline\PipeDreams\maya\scripts"
 
 
 
@@ -94,7 +97,6 @@ def open_application(usr_input,
     home_dir = f"{os.path.join(os.path.join(os.path.expanduser('~')), 'Documents')}/projects"
 
     user_name = os.environ['COMPUTERNAME'].lower()
-    # user_name = str(config['user_name']).lower()
 
     updateModule()
 
