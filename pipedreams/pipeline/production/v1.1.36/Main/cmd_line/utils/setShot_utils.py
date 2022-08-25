@@ -47,6 +47,10 @@ def updateModule():
         Documents_path += "/Documents"
 
     pipedreams_mod_path = f"{Documents_path}/maya/modules/PipeDreams.mod"
+    modules_dir_path = f"{Documents_path}/maya/modules"
+
+    if os.path.exists(modules_dir_path) != True:
+        os.mkdir(modules_dir_path)
 
     with open(pipedreams_mod_path, "w") as f:
 
