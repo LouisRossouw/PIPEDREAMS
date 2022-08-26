@@ -1,6 +1,8 @@
 cmd_line:
 1 - install redline python package and change a line of code, refer to png
-
+2 - pip install requests
+3 - pip install PyYaml
+4 - pip install PySimpleGUI
 
 Maya:
 (to use pip for Maya:   mayapy -m pip install pillow   )

@@ -49,7 +49,10 @@ def get_resolution(capture_data_manifest, version):
     aspect_ratio = capture_data_manifest["capture_data"][version]["RESOLUTION"][0]
 
     if aspect_ratio == "2.35:1":
-        base_resolution = 1920, 818
+        base_resolution = 1920, 817
+        scaled = 1920, 1080
+    elif aspect_ratio == "2.35":
+        base_resolution = 1920, 820
         scaled = 1920, 1080
     elif aspect_ratio == "16:9":
         base_resolution = 1920, 1080
@@ -63,6 +66,8 @@ def get_resolution(capture_data_manifest, version):
     elif aspect_ratio == "1:1":
         base_resolution = 1000, 1000
         scaled = 1920, 1260
+    else:
+        scaled = 1920, 1080
 
     return scaled
 
