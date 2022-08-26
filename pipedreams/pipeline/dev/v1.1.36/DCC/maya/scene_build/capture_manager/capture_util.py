@@ -11,8 +11,49 @@ import toolUtils.pillow as pillow
 
 
 
+def get_resolution():
+    """ returns the resolution and aspect ratio of the maya scene file. """
+
+    width = cmds.getAttr("defaultResolution.width")
+    height = cmds.getAttr("defaultResolution.height")
+
+    res = str(width) + "x" + str(height)
+
+    if res == "1920x820":
+        aspect_ratio = "2.35"
+    elif res == "1920x817":
+        aspect_ratio = "2.35:1"
+    elif res == "1920x1080":
+        aspect_ratio = "16:9"
+    elif res == "1080x1080":
+        aspect_ratio = "1:1"
+    elif res == "1000x1000":
+        aspect_ratio = "1:1"
+    else:
+        aspect_ratio = "/"
+
+    return(aspect_ratio, width, height, res)
 
 
+
+
+def get_FPS():
+    """ returns the FPS in numbers and not text """
+
+    FPS = cmds.currentUnit(query=True, time=True)
+
+    if str(FPS) == "film":
+        FPS_value = "24"
+    elif str(FPS) == "pal":
+        FPS_value = "25"
+    elif str(FPS) == "ntsc":
+        FPS_value = "30"
+    elif str(FPS) == "palf":
+        FPS_value = "50"
+    else:
+        FPS_value = str(FPS)
+
+    return(FPS_value)
 
 
 
@@ -64,10 +105,11 @@ def write_capture_data(
 
     if os.path.exists(JSON_CAPTURE) != True:
 
+        get_res = get_resolution()
         data = {}
         data["capture_data"] = {UI_version_eval: {
-                                            "RESOLUTION": ["2.35:1", cmds.getAttr("defaultResolution.width"), cmds.getAttr("defaultResolution.height")],
-                                            "FPS": cmds.currentUnit(query=True, time=True),
+                                            "RESOLUTION": [get_res[0], int(get_res[1]), int(get_res[2])],
+                                            "FPS": get_FPS(),
                                             "FOCAL_LENS": 135,
                                             "VERSION": UI_version_eval,
                                             "PROJECT": project,
@@ -89,12 +131,12 @@ def write_capture_data(
         write_to_json(JSON_CAPTURE, data)
 
     else:
-
+        get_res = get_resolution()
         data = read_json(JSON_CAPTURE)
         project_name = os.getenv("PROJECT_NAME")
         data["capture_data"] = {UI_version_eval: {
-                                            "RESOLUTION": ["2.35:1", cmds.getAttr("defaultResolution.width"), cmds.getAttr("defaultResolution.width")],
-                                            "FPS": cmds.currentUnit(query=True, time=True),
+                                            "RESOLUTION": [get_res[0], int(get_res[1]), int(get_res[2])],
+                                            "FPS": get_FPS(),
                                             "FOCAL_LENS": 135,
                                             "VERSION": UI_version_eval,
                                             "PROJECT": project,
@@ -260,30 +302,32 @@ def capture_run(
 
 if __name__ == "__main__":
 
-    capture_name_eval = "dv_010"
-    start_number_eval = 1
-    end_number_eval = 120
-    task_name_eval = "anim"
-    export_path_eval = "D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures"
-    selected_output = "mp4"
-    UI_version_eval = "v001"
-    UI_publish_eval = True
-    UI_guides_eval = True
-    UI_GS_eval = False
-    UI_comment_eval = "This is a comment"
+    # capture_name_eval = "dv_010"
+    # start_number_eval = 1
+    # end_number_eval = 120
+    # task_name_eval = "anim"
+    # export_path_eval = "D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures"
+    # selected_output = "mp4"
+    # UI_version_eval = "v001"
+    # UI_publish_eval = True
+    # UI_guides_eval = True
+    # UI_GS_eval = False
+    # UI_comment_eval = "This is a comment"
+    #
+    #
+    # capture_run(
+    #             capture_name_eval,
+    #             start_number_eval,
+    #             end_number_eval,
+    #             task_name_eval,
+    #             export_path_eval,
+    #             selected_output,
+    #             UI_version_eval,
+    #             UI_publish_eval,
+    #             UI_guides_eval,
+    #             UI_GS_eval,
+    #             UI_comment_eval,
+    #             )
 
 
-    capture_run(
-                capture_name_eval,
-                start_number_eval,
-                end_number_eval,
-                task_name_eval,
-                export_path_eval,
-                selected_output,
-                UI_version_eval,
-                UI_publish_eval,
-                UI_guides_eval,
-                UI_GS_eval,
-                UI_comment_eval,
-                )
-
+    get_resolution()
