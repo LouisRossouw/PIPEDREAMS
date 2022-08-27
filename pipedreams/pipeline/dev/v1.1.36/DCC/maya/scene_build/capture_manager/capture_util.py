@@ -88,6 +88,7 @@ def write_capture_data(
                         UI_guides_eval,
                         UI_GS_eval,
                         UI_comment_eval,
+                        focal_length
                        ):
     """  writes out the json data """
 
@@ -110,7 +111,7 @@ def write_capture_data(
         data["capture_data"] = {UI_version_eval: {
                                             "RESOLUTION": [get_res[0], int(get_res[1]), int(get_res[2])],
                                             "FPS": get_FPS(),
-                                            "FOCAL_LENS": 135,
+                                            "FOCAL_LENS": int(focal_length),
                                             "VERSION": UI_version_eval,
                                             "PROJECT": project,
                                             "PROJECT_NAME": project_name,
@@ -137,7 +138,7 @@ def write_capture_data(
         data["capture_data"] = {UI_version_eval: {
                                             "RESOLUTION": [get_res[0], int(get_res[1]), int(get_res[2])],
                                             "FPS": get_FPS(),
-                                            "FOCAL_LENS": 135,
+                                            "FOCAL_LENS": int(focal_length),
                                             "VERSION": UI_version_eval,
                                             "PROJECT": project,
                                             "PROJECT_NAME": project_name,
@@ -211,15 +212,17 @@ def capture_run(
     panel = cmds.getPanel(wf=1)
     camera = cmds.modelPanel(panel, query=True, camera=True)
 
-    # evaluate res mask and switch it off before playblast :
+
+    # evaluate selected cameras attributes.
     camera_shape = camera + 'Shape'
     camGate_eval = cmds.camera(camera_shape, edit=True, displayFilmGate=False)
     camRes_eval = cmds.camera(camera_shape, edit=True, displayResolution=False)
 
+    focal_length = cmds.getAttr(camera_shape + ".focalLength")
+
+
 # resets disables panzoom before capture.
     cmds.setAttr(camera_shape + ".panZoomEnabled", 0)
-
-
 
 
 # get current resolution :
@@ -272,6 +275,7 @@ def capture_run(
                         UI_guides_eval,
                         UI_GS_eval,
                         UI_comment_eval,
+                        focal_length
                        )
 
 # composit overlays
