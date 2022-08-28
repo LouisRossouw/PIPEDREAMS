@@ -10,7 +10,7 @@ development_build : ""
 production_build : ""
 
 Pipeline_name: 'PIPEDREAMS'
-Pipeline_Path: "C:\\work\\projects\\3D\\projects"
+Pipeline_Path: "D:\\work\\projects\\3D\\projects"
 
 user_name: "louis"
 

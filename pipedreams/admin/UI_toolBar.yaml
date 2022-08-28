@@ -28,8 +28,8 @@ func_2: True
 ######### DCC LAUNCHER UI #########
 
 # Position
-WINDOW_NUDGE: [700, 500]
-WINDOW_SIZE: [700, 400]
+WINDOW_NUDGE: [500, 300]
+WINDOW_SIZE: [500, 260]
 
 # UI colors
 THEME: 'DarkGrey8'
@@ -48,8 +48,8 @@ WINDOW_BG_COLOR: "black"
 ######### CREATE PROJECT UI #########
 
 # Position
-CREATE_WINDOW_NUDGE: [500, 1200]
-CREATE_WINDOW_SIZE: [700, 1000]
+CREATE_WINDOW_NUDGE: [500, 1000]
+CREATE_WINDOW_SIZE: [500, 700]
 
 # UI colors
 CREATE_THEME: 'DarkGrey8'
