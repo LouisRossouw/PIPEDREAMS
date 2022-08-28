@@ -1,2 +1,9 @@
 *.pyc
 .vscode
+
+pipedreams/admin/pipeline_config.yaml
+pipedreams/admin/UI_toolBar.yaml
+pipedreams/admin/artist_config.yaml
+pipedreams/admin/admin_config.yaml
+
+pipedreams/admin/data/user_data_base/LOURO.json
