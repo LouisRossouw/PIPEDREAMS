@@ -117,20 +117,22 @@ def composit_sequence(image_sequence_dir, json_manifest_path, version):
     RESOLUTION = capture_data_manifest["capture_data"][version]["RESOLUTION"]
 
     count = 0
-    for image in image_sequence:
+    frame_count = int(RANGE[0]) - 1
 
-        print("adding overlays: " + str(count))
+    for image in image_sequence:
 
         format = image[-3:]
         if format == "png":
 
             count += 1
+            frame_count += 1
+
+            print("adding overlays: frame -- " + str(frame_count), " | count -- " + str(count))
 
             # Open image frame that was captured
             image_path = f"{image_sequence_dir}/{image}"
             img = Image.open(image_path).convert("RGBA")
             img_size_width, img_size_height = img.size
-
 
 
 # Blank 1080P resolution, this is the base
@@ -158,7 +160,7 @@ def composit_sequence(image_sequence_dir, json_manifest_path, version):
             # FPS
             draw.text((img_size_width - TXT_FPS[0], scaled_resolution[1] - TXT_FPS[1]),"FPS: " + str(FPS),(255,255,255), font=font)
             # Frame Number
-            draw.text((img_size_width - TXT_FRAME_NUM[0], scaled_resolution[1] - TXT_FRAME_NUM[1]),"Frame: " + str(count),(255,255,255), font=font)
+            draw.text((img_size_width - TXT_FRAME_NUM[0], scaled_resolution[1] - TXT_FRAME_NUM[1]),"Frame: " + str(frame_count),(255,255,255), font=font)
             # Lens
             draw.text((img_size_width - TXT_LENS[0], scaled_resolution[1] - TXT_LENS[1]),"Focal: " + str(FOCAL_LENS),(255,255,255), font=font)
             # Range
