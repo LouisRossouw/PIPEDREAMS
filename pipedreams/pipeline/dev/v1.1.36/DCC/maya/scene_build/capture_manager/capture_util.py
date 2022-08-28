@@ -161,6 +161,24 @@ def write_capture_data(
 
 
 
+def collect_scene_data(camera, min, max):
+    """ runs through every frame and collects data from the scene and records it into a json file,
+    example, records the cameras world transforms and focal length on every frame.
+    """
+
+    # min = cmds.playbackOptions(minTime=True, query=True)
+    # max = cmds.playbackOptions(maxTime=True, query=True)
+
+    for i in range(int(min), int(max + 1)):
+
+        cmds.currentTime(i, update=True, edit=True)
+        camera_world_transforms = cmds.xform(camera,query=True,worldSpace=True,rotatePivot=True)
+
+        print(camera_world_transforms)
+
+
+
+
 
 
 def create_dirs(export_path_eval, task_name_eval,
@@ -208,7 +226,7 @@ def capture_run(
                 UI_comment_eval,
                 ):
 
-
+    # Get camera
     panel = cmds.getPanel(wf=1)
     camera = cmds.modelPanel(panel, query=True, camera=True)
 
@@ -221,11 +239,11 @@ def capture_run(
     focal_length = cmds.getAttr(camera_shape + ".focalLength")
 
 
-# resets disables panzoom before capture.
+    # resets disables panzoom before capture.
     cmds.setAttr(camera_shape + ".panZoomEnabled", 0)
 
 
-# get current resolution :
+    # get current resolution :
     get_width = cmds.getAttr("defaultResolution.width")
     get_height = cmds.getAttr("defaultResolution.height")
 
@@ -234,20 +252,20 @@ def capture_run(
 
     res = (str(get_width) + ':' + str(get_height))
 
-# create directories if it does not exist.
+    # create directories if it does not exist.
     create_dirs(export_path_eval, task_name_eval,
                 capture_name_eval, UI_version_eval)
 
-# Png sequence
+    # Png sequence
 
     file_name = capture_name_eval + "_" + task_name_eval + "_" + UI_version_eval
     PNG_file_saveName_path = export_path_eval + "/" + task_name_eval + "/" + capture_name_eval + "/" + UI_version_eval + "/png_seq/raw/" + file_name
 
 
-# playblast
+    # playblast
     cmds.playblast(format='image',
                     filename= PNG_file_saveName_path,
-                    sequenceTime=0,
+                    sequenceTime=False,
                     clearCache=1,
                     viewer=0,
                     showOrnaments=0,
@@ -256,10 +274,14 @@ def capture_run(
                     compression="png",
                     quality=100,
                     widthHeight=[get_width,get_height],
+                    indexFromZero=True
                     )
 
     # file_saveName_path = path_to_new_dir + '/' + export_version_name + '/'
     # os.system("start " + file_saveName_path)
+
+    # collects scene data for every frame.
+    collect_scene_data(camera, start_number_eval, end_number_eval)
 
     json_manifest_path = export_path_eval + "/" + task_name_eval + "/" + capture_name_eval + "/" + UI_version_eval + "/data/capture_manifest.json"
     write_capture_data(
