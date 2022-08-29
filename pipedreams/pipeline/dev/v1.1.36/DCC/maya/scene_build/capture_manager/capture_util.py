@@ -98,83 +98,64 @@ def write_capture_data(
 
     TOP_DATA = os.path.dirname(os.getenv("TOP_ASSETS")) + "/data"
     CAPTURES_DATA_DIR = TOP_DATA + "/captures"
+    JSON_CAPTURE = CAPTURES_DATA_DIR + "/capture_data.json"
 
     if os.path.exists(CAPTURES_DATA_DIR) != True:
         os.mkdir(CAPTURES_DATA_DIR)
 
-    JSON_CAPTURE = CAPTURES_DATA_DIR + "/capture_data.json"
-
     if os.path.exists(JSON_CAPTURE) != True:
-
-        get_res = get_resolution()
         data = {}
-        data["capture_data"] = {UI_version_eval: {
-                                            "RESOLUTION": [get_res[0], int(get_res[1]), int(get_res[2])],
-                                            "FPS": get_FPS(),
-                                            "FOCAL_LENS": int(focal_length),
-                                            "VERSION": UI_version_eval,
-                                            "PROJECT": project,
-                                            "PROJECT_NAME": project_name,
-                                            "TASK": task_name_eval,
-                                            "START": start_number_eval,
-                                            "END": end_number_eval,
-                                            "RANGE": [start_number_eval, end_number_eval],
-                                            "COMMENT": UI_comment_eval,
-                                            "USER": userName,
-                                            "PATH": export_path_eval + "/" + task_name_eval + "/" + capture_name_eval + "/" + UI_version_eval,
-
-                                            "POSTED_TO_DISCORD": False,
-                                            "GUIDES": UI_guides_eval,
-                                            "PUBLISH": UI_publish_eval,
-                                            "GREENSCREEN": UI_GS_eval
-                                            }}
-
         write_to_json(JSON_CAPTURE, data)
 
-    else:
-        get_res = get_resolution()
-        data = read_json(JSON_CAPTURE)
-        project_name = os.getenv("PROJECT_NAME")
-        data["capture_data"] = {UI_version_eval: {
-                                            "RESOLUTION": [get_res[0], int(get_res[1]), int(get_res[2])],
-                                            "FPS": get_FPS(),
-                                            "FOCAL_LENS": int(focal_length),
-                                            "VERSION": UI_version_eval,
-                                            "PROJECT": project,
-                                            "PROJECT_NAME": project_name,
-                                            "TASK": task_name_eval,
-                                            "START": start_number_eval,
-                                            "END": end_number_eval,
-                                            "RANGE": [start_number_eval, end_number_eval],
-                                            "COMMENT": UI_comment_eval,
-                                            "USER": userName,
-                                            "PATH": export_path_eval + "/" + task_name_eval + "/" + capture_name_eval + "/" + UI_version_eval,
+    get_res = get_resolution()
+    data = read_json(JSON_CAPTURE)
+    project_name = os.getenv("PROJECT_NAME")
+    data["capture_data"] = {UI_version_eval: {
+                                        "RESOLUTION": [get_res[0], int(get_res[1]), int(get_res[2])],
+                                        "FPS": get_FPS(),
+                                        "FOCAL_LENS": int(focal_length),
+                                        "VERSION": UI_version_eval,
+                                        "PROJECT": project,
+                                        "PROJECT_NAME": project_name,
+                                        "TASK": task_name_eval,
+                                        "START": start_number_eval,
+                                        "END": end_number_eval,
+                                        "RANGE": [start_number_eval, end_number_eval],
+                                        "COMMENT": UI_comment_eval,
+                                        "USER": userName,
+                                        "PATH": export_path_eval + "/" + task_name_eval + "/" + capture_name_eval + "/" + UI_version_eval,
 
-                                            "POSTED_TO_DISCORD": False,
-                                            "GUIDES": UI_guides_eval,
-                                            "PUBLISH": UI_publish_eval,
-                                            "GREENSCREEN": UI_GS_eval
-                                            }}
+                                        "POSTED_TO_DISCORD": False,
+                                        "GUIDES": UI_guides_eval,
+                                        "PUBLISH": UI_publish_eval,
+                                        "GREENSCREEN": UI_GS_eval
+                                        }}
 
     write_to_json(JSON_CAPTURE, data)
     write_to_json(json_manifest_path, data)
 
 
 
-def collect_scene_data(camera, min, max):
+def collect_scene_data(camera, min, max, json_manifest_path):
     """ runs through every frame and collects data from the scene and records it into a json file,
     example, records the cameras world transforms and focal length on every frame.
     """
 
-    # min = cmds.playbackOptions(minTime=True, query=True)
-    # max = cmds.playbackOptions(maxTime=True, query=True)
+    data = read_json(json_manifest_path)
 
+    camera_xform = []
     for i in range(int(min), int(max + 1)):
 
         cmds.currentTime(i, update=True, edit=True)
         camera_world_transforms = cmds.xform(camera,query=True,worldSpace=True,rotatePivot=True)
 
-        print(camera_world_transforms)
+        camera_xform.append(camera_world_transforms)
+        print("Collecting scene data: " + str(i))
+
+    # append to capture_manifest
+    data["camera_xform"] = camera_xform
+
+    write_to_json(json_manifest_path, data)
 
 
 
@@ -257,7 +238,6 @@ def capture_run(
                 capture_name_eval, UI_version_eval)
 
     # Png sequence
-
     file_name = capture_name_eval + "_" + task_name_eval + "_" + UI_version_eval
     PNG_file_saveName_path = export_path_eval + "/" + task_name_eval + "/" + capture_name_eval + "/" + UI_version_eval + "/png_seq/raw/" + file_name
 
@@ -280,10 +260,8 @@ def capture_run(
     # file_saveName_path = path_to_new_dir + '/' + export_version_name + '/'
     # os.system("start " + file_saveName_path)
 
-    # collects scene data for every frame.
-    collect_scene_data(camera, start_number_eval, end_number_eval)
-
     json_manifest_path = export_path_eval + "/" + task_name_eval + "/" + capture_name_eval + "/" + UI_version_eval + "/data/capture_manifest.json"
+
     write_capture_data(
                         json_manifest_path,
                         capture_name_eval,
@@ -299,6 +277,16 @@ def capture_run(
                         UI_comment_eval,
                         focal_length
                        )
+
+    # collects scene data for every frame.
+    collect_scene_data(
+                       camera,
+                       start_number_eval,
+                       end_number_eval,
+                       json_manifest_path
+                        )
+
+
 
 # composit overlays
     if UI_publish_eval == True:
