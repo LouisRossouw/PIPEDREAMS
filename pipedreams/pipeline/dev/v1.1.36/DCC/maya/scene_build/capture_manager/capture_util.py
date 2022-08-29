@@ -108,8 +108,9 @@ def write_capture_data(
         write_to_json(JSON_CAPTURE, data)
 
     get_res = get_resolution()
-    data = read_json(JSON_CAPTURE)
+    #data = read_json(JSON_CAPTURE)
     project_name = os.getenv("PROJECT_NAME")
+    data = {}
     data["capture_data"] = {UI_version_eval: {
                                         "RESOLUTION": [get_res[0], int(get_res[1]), int(get_res[2])],
                                         "FPS": get_FPS(),
@@ -152,7 +153,14 @@ def collect_scene_data(camera, min, max, json_manifest_path):
         camera_xform.append(camera_world_transforms)
         print("Collecting scene data: " + str(i))
 
+
+    # polyEval
+    cmds.select(all=True)
+    query_poly = cmds.polyEvaluate()
+    cmds.select(clear=True)
+
     # append to capture_manifest
+    data["query_poly"] = query_poly
     data["camera_xform"] = camera_xform
 
     write_to_json(json_manifest_path, data)
