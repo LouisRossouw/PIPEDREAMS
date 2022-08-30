@@ -1,6 +1,7 @@
 import os
 import json
 from pathlib import Path
+from zlib import Z_BEST_SPEED
 
 from PIL import Image, ImageFont, ImageDraw, ImageEnhance
 
@@ -106,7 +107,7 @@ def composit_sequence(image_sequence_dir, json_manifest_path, version):
     # Read the Captures data manifest file
     capture_data_manifest = read_json(json_manifest_path)
 
-
+    # json data - General
     FPS = capture_data_manifest["capture_data"][version]["FPS"]
     PROJECT = capture_data_manifest["capture_data"][version]["PROJECT"]
     USER = capture_data_manifest["capture_data"][version]["USER"]
@@ -115,6 +116,17 @@ def composit_sequence(image_sequence_dir, json_manifest_path, version):
     VERSION = capture_data_manifest["capture_data"][version]["VERSION"]
     RANGE = capture_data_manifest["capture_data"][version]["RANGE"]
     RESOLUTION = capture_data_manifest["capture_data"][version]["RESOLUTION"]
+
+    # json data - poly
+    VERTEX = capture_data_manifest["query_poly"]["vertex"]
+    EDGE = capture_data_manifest["query_poly"]["edge"]
+    FACE = capture_data_manifest["query_poly"]["face"]
+    UVCOORD = capture_data_manifest["query_poly"]["uvcoord"]
+    TRIANGLE = capture_data_manifest["query_poly"]["triangle"]
+
+    # json data - camera xform / world transforms (list of lists)
+    CAMERA_XFORM = capture_data_manifest["camera_xform"]
+
 
     count = 0
     frame_count = int(RANGE[0]) - 1
@@ -189,33 +201,52 @@ def composit_sequence(image_sequence_dir, json_manifest_path, version):
 
 
 
+
+def camera_plot(data_path):
+    """ This function will draw the cameras xform as a visual representation """
+
+    capture_data_manifest = read_json(data_path)
+
+    CAMERA_XFORM_DATA = capture_data_manifest["camera_xform"]
+
+    IMG_SIZE_X = 1000
+    IMG_SIZE_Z = 1000
+
+    IMG_CENTRE = IMG_SIZE_X / 2
+
+    DRAW_SCALE = 10
+
+    # Blank starting image - need to be dynamic to the cameras travel distance.
+    blank_canvas = Image.new("RGB", (IMG_SIZE_X, IMG_SIZE_Z), (0,0,0))
+    draw = ImageDraw.Draw(blank_canvas, "RGBA")
+
+    frame = 0
+
+    for cord in CAMERA_XFORM_DATA:
+        frame += 1
+
+        X = (cord[0] * DRAW_SCALE) + IMG_CENTRE
+        Z = (cord[2] * DRAW_SCALE) + IMG_CENTRE
+
+        print(frame, "-", X, Z)
+
+        draw.line((X, Z, X, Z))
+
+    blank_canvas.show()
+
+
+
+
+
 if __name__ == "__main__":
 
 
     logo_path = "D:/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.jpg"
-    image_sequence_dir = "D:/work/projects/3D/projects/boxx/dev/shots/bxx_010/captures/anim/bxx_010/v014"
-    output = "D:/work/projects/3D/projects/boxx/dev/shots/bxx_010/captures/anim/bxx_010/v014"
+    image_sequence_dir = "D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v017/png_seq/raw"
+    output = "D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v017/dev"
+    data = "D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v017/data/capture_manifest.json"
 
-    data = {}
-    data["capture_data"] = {
-                            "RESOLUTION": ["2.35:1", 1920, 818],
-                            "RANGE": [1, 100],
-                            "FPS": 25,
-                            "PROJECT": "boxx_dev_bxx_010",
-                            "USER": "LOURO",
-                            "COMMENT": "this is still a WIP!",
-                            "FOCAL_LENS": 135,
-                            "VERSION": "v007",
-
-                            "OVERLAY": True,
-                            "PUBLISH": True,
-                            }
-
-    write_to_json(image_sequence_dir + "/capture_data_manifest.json", data)
-
-    test = read_json(image_sequence_dir + "/capture_data_manifest.json")
-    composit_sequence(image_sequence_dir)
-
-
-
-    png_to_vid(output + "/anim_bxx_010_v014", output + "/test.mp4")
+    version = "v017"
+    #composit_sequence(image_sequence_dir, data, version)
+    
+    camera_plot(data)
