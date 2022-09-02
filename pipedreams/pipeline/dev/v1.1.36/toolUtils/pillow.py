@@ -185,6 +185,11 @@ def composit_sequence(image_sequence_dir, json_manifest_path, version):
             draw.text((50, 100),PROJECT + "_" + VERSION,(255,255,255), font=font)
 
 
+# Top Right Corner
+            # Visuals
+            plott_camera = camera_plot(json_manifest_path, frame_count).resize((125,125))
+            blank_img.paste(plott_camera, (img_size_width - 200, 0))
+
 # Overlay
             if capture_data_manifest["capture_data"][version]["GUIDES"] == True:
                 draw.line((0, 250, 1920, 250), fill=(OVERLAY_COLOR[0],OVERLAY_COLOR[1],OVERLAY_COLOR[2], OVERLAY_TRANSPARENCY))
@@ -202,7 +207,7 @@ def composit_sequence(image_sequence_dir, json_manifest_path, version):
 
 
 
-def camera_plot(data_path):
+def camera_plot(data_path, current_frame):
     """ This function will draw the cameras xform as a visual representation """
 
     capture_data_manifest = read_json(data_path)
@@ -222,31 +227,33 @@ def camera_plot(data_path):
 
     frame = 0
 
-    for cord in CAMERA_XFORM_DATA:
+    for i in range(current_frame):
         frame += 1
+        cords_on_frame = CAMERA_XFORM_DATA[i]
 
-        X = (cord[0] * DRAW_SCALE) + IMG_CENTRE
-        Z = (cord[2] * DRAW_SCALE) + IMG_CENTRE
+        X = (cords_on_frame[0] * DRAW_SCALE) + IMG_CENTRE
+        Z = (cords_on_frame[2] * DRAW_SCALE) + IMG_CENTRE
 
-        print(frame, "-", X, Z)
+        # print(frame, "-", X, Z)
 
-        draw.line((X, Z, X, Z))
+        draw.line((X, Z, X, Z+1), fill ="magenta", width = 70)
 
-    blank_canvas.show()
+    plotted_img = blank_canvas
 
-
+    return(plotted_img)
 
 
 
 if __name__ == "__main__":
 
 
-    logo_path = "D:/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.jpg"
-    image_sequence_dir = "D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v017/png_seq/raw"
-    output = "D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v017/dev"
-    data = "D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v017/data/capture_manifest.json"
+    logo_path = "C:/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.jpg"
+    image_sequence_dir = "C:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v013/png_seq/raw"
+    output = "C:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v013/dev"
+    data = "C:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v013/data/capture_manifest.json"
 
-    version = "v017"
-    #composit_sequence(image_sequence_dir, data, version)
+    version = "v013"
+    current_frame = 27
+    composit_sequence(image_sequence_dir, data, version)
     
-    camera_plot(data)
+    #camera_plot(data, current_frame).show()
