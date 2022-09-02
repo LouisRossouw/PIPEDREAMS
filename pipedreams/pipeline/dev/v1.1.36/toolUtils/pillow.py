@@ -1,7 +1,6 @@
 import os
 import json
 from pathlib import Path
-from zlib import Z_BEST_SPEED
 
 from PIL import Image, ImageFont, ImageDraw, ImageEnhance
 
@@ -205,6 +204,40 @@ def composit_sequence(image_sequence_dir, json_manifest_path, version):
 
 
 
+def min_max_camera(CAMERA_XFORM_DATA):
+    """ returns the min and max distance the camera has travelled in the 3D viewport """
+
+    all_x = []
+    all_z = []
+
+    for i in CAMERA_XFORM_DATA:
+
+        X = i[0]
+        Z = i[2]
+        all_x.append(X)
+        all_z.append(Z)
+
+    return(min(all_x), max(all_z))
+
+
+
+def times_by_camera(MINMAX):
+    """ determines the size to the canvas should be, if the max distance the travelled is greater than 30 , then times canvas size by 2.
+        This might also need to be determined by wether the scene is in CM or meters.
+    """
+
+    if MINMAX[0] < float(-35):
+        times_by = 2
+        print("yes", MINMAX[0])
+    elif MINMAX[1] > float(35):
+        times_by = 2
+        print("yep", MINMAX[1])
+    else:
+        times_by = 1
+
+    return(times_by)
+
+
 
 
 def camera_plot(data_path, current_frame):
@@ -214,46 +247,49 @@ def camera_plot(data_path, current_frame):
 
     CAMERA_XFORM_DATA = capture_data_manifest["camera_xform"]
 
-    IMG_SIZE_X = 1000
-    IMG_SIZE_Z = 1000
+    MINMAX = min_max_camera(CAMERA_XFORM_DATA)
+    TIMES_BY = times_by_camera(MINMAX)
 
+    IMG_SIZE_X = 1000 * TIMES_BY
+    IMG_SIZE_Z = 1000 * TIMES_BY
     IMG_CENTRE = IMG_SIZE_X / 2
-
     DRAW_SCALE = 10
+    COLOR = "magenta"
 
     # Blank starting image - need to be dynamic to the cameras travel distance.
     blank_canvas = Image.new("RGB", (IMG_SIZE_X, IMG_SIZE_Z), (0,0,0))
     draw = ImageDraw.Draw(blank_canvas, "RGBA")
 
     frame = 0
-
     for i in range(current_frame):
+
         frame += 1
         cords_on_frame = CAMERA_XFORM_DATA[i]
 
         X = (cords_on_frame[0] * DRAW_SCALE) + IMG_CENTRE
         Z = (cords_on_frame[2] * DRAW_SCALE) + IMG_CENTRE
 
-        # print(frame, "-", X, Z)
+        # Plot camera based on the above cords.
+        draw.ellipse((X, Z, X+35, Z+35), fill =COLOR,)
 
-        draw.line((X, Z, X, Z+1), fill ="magenta", width = 70)
+    return(blank_canvas)
 
-    plotted_img = blank_canvas
 
-    return(plotted_img)
+
 
 
 
 if __name__ == "__main__":
 
+    version = "v019"
 
-    logo_path = "C:/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.jpg"
-    image_sequence_dir = "C:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v013/png_seq/raw"
-    output = "C:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v013/dev"
-    data = "C:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/v013/data/capture_manifest.json"
+    logo_path = f"D:/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.jpg"
+    image_sequence_dir = f"D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/{version}/png_seq/raw"
+    output = f"D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/{version}/dev"
+    data = f"D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/{version}/data/capture_manifest.json"
 
-    version = "v013"
-    current_frame = 27
-    composit_sequence(image_sequence_dir, data, version)
+
+    current_frame = 50
+    #composit_sequence(image_sequence_dir, data, version)
     
-    #camera_plot(data, current_frame).show()
+    camera_plot(data, current_frame).show()
