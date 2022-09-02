@@ -281,15 +281,19 @@ def camera_plot(data_path, current_frame):
 
 if __name__ == "__main__":
 
-    version = "v019"
+    DRIVE = "C:"
+    PROJECT = "boxx"
+    SUBPROJECT = "dev"
+    SHOT = "bxx_010"
+    VERSION = "v002"
 
-    logo_path = f"D:/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.jpg"
-    image_sequence_dir = f"D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/{version}/png_seq/raw"
-    output = f"D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/{version}/dev"
-    data = f"D:/work/projects/3D/projects/test/testdev/shots/dv_010/captures/anim/dv_010/{version}/data/capture_manifest.json"
+    logo_path = f"{DRIVE}/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.jpg"
+    image_sequence_dir = f"{DRIVE}/work/projects/3D/projects/{PROJECT}/{SUBPROJECT}/shots/{SHOT}/captures/anim/{SHOT}/{VERSION}/png_seq/raw"
+    output = f"{DRIVE}/work/projects/3D/projects/{PROJECT}/{SUBPROJECT}/shots/{SHOT}/captures/anim/{SHOT}/{VERSION}/dev"
+    data = f"{DRIVE}/work/projects/3D/projects/{PROJECT}/{SUBPROJECT}/shots/{SHOT}/captures/anim/{SHOT}/{VERSION}/data/capture_manifest.json"
 
 
     current_frame = 50
-    #composit_sequence(image_sequence_dir, data, version)
+    #composit_sequence(image_sequence_dir, data, VERSION)
     
     camera_plot(data, current_frame).show()
