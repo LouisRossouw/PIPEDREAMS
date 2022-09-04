@@ -107,11 +107,20 @@ def getLatestVersion(directory_path):
 
 
 
-def cmd_line_start(cmd_line_start_path):
+def cmd_line_start(cmd_line_start_path, PipeLine_Config):
     """ Opens the cmd line interface """
 
-    os.startfile(cmd_line_start_path)
+    Python_interpreter_type = PipeLine_Config["Python_interpreter_type"]
+    pipeline_path = os.path.dirname(os.path.dirname(__file__))
 
+    # python interpreter path
+    python_int = f"{pipeline_path}/pipeline/tools/Python/Python310/python.exe "
+
+    # either use system default python or the portable version that comes with this tool.
+    if Python_interpreter_type == "portable":
+        os.system(python_int + cmd_line_start_path)
+    elif Python_interpreter_type == "system":
+        os.startfile(cmd_line_start_path)
 
 
 
@@ -125,6 +134,8 @@ def run():
 
     # check Title
     title = check_title(userName)
+    
+    PipeLine_Config = open_PipeLine_Config()
 
     # check user that is accessing the pipeline via cmd tool
     if privilages == "Tivoli":
@@ -143,7 +154,7 @@ def run():
 
         # start cmd line interface
         print(pipeline_version)
-        cmd_line_start(cmd_line_start_path)
+        cmd_line_start(cmd_line_start_path, PipeLine_Config)
 
 
     else:
