@@ -10,12 +10,15 @@ development_build : ""
 production_build : ""
 
 Pipeline_name: 'PIPEDREAMS'
-Pipeline_Path: "D:\\work\\projects\\3D\\projects"
+Pipeline_Path: "C:\\work\\projects\\3D\\projects"
 
 user_name: "louis"
 
 maya_version: 2022
 houdini_version: 19.0.383
+
+# "system or "portable" -- use either "system" installed python or the "portable" version that comes with pipedreams tool.
+Python_interpreter_type: "portable" 
 
 # UI Start
 only_PipeDreams_Projects: True # Only list projects created with PipeDreams
