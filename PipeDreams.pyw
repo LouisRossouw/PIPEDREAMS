@@ -5,10 +5,12 @@
 """
 
 import os
+import sys
 import pipedreams.launch.utils as utils
 
 
-this_dir = os.path.dirname(__file__)
+
+this_dir = os.path.dirname(sys.argv[0])
 
 pipeline_config = utils.yaml_config(f"{this_dir}/pipedreams/admin/pipeline_config.yaml")
 Python_interpreter_type = pipeline_config["Python_interpreter_type"]
