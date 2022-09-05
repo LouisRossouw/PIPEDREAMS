@@ -3,39 +3,76 @@
 """
 
 import os
-import yaml
-import set_paths as set_paths
+import sys
 
 
-def open_PipeLine_Config():
-    """ opens the pipeline_config """
 
-    # Open config
-    config_path = os.path.abspath(__file__)
-    config_path_dir = (f"{os.path.dirname(os.path.dirname(config_path))}")
-    config = yaml.safe_load(open(f'{os.path.dirname(config_path_dir)}/PipeDreams/admin/pipeline_config.yaml', 'r'))
+def get_the_PY(PIPEDREAMS_DIR):
+    """ returns the python version nam being used in the /pipedreams/pipeline/tools/Python directory -
+        incase there is a unique python version.
+    """
+    python_dir = f"{PIPEDREAMS_DIR}/pipedreams/pipeline/tools/Python"
+    pyname = os.listdir(python_dir)[0]
 
-    return(config)
+    return(pyname)
 
 
-this_directory = os.path.dirname(__file__)
+def path_set(
+            launch_dir, 
+            ffmpeg_dir, 
+            python_interpreter, 
+            python_scripts
+            ):
+    """ sets system paths to env and other tools like ffmpeg """
 
-launch_trayIcon = f"{this_directory}/UI_trayIcon.pyw"
-pipeline_path = os.path.dirname(os.path.dirname(__file__))
-print(pipeline_path)
-## Run ##
+    # set sys env paths
+    sys.path.append(launch_dir)
+    os.environ['PATH'] += os.pathsep + ffmpeg_dir
+    os.environ['PATH'] += os.pathsep + python_interpreter
+    os.environ['PATH'] += os.pathsep + python_scripts
 
-# Set paths
-set_paths.path_set()
 
-# Start dream environment
-print("Virtual env active: ", bool(os.getenv("VIRTUAL_ENV")))
+def run():
+    """ Startsup the Pipeline tools. """
 
-# start UI icon (UI_trayIcon.pyw)
-Python_interpreter_type = open_PipeLine_Config()["Python_interpreter_type"]
+    this_directory = os.path.dirname(__file__)
+    PIPEDREAMS_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
-if Python_interpreter_type == "portable":
-    python_int = f"{pipeline_path}/pipeline/tools/Python/Python310/python.exe "
-    os.system("START /B " + python_int + " " + launch_trayIcon)
-elif Python_interpreter_type == "system":
+    launch_dir = f"{PIPEDREAMS_DIR}/pipedreams/launch"
+    launch_trayIcon = f"{launch_dir}/UI_trayIcon.pyw"
+
+    # paths to tools.
+    ffmpeg_dir = f"{PIPEDREAMS_DIR}/pipedreams/pipeline/tools/ffmpeg"
+
+    # Portable Python if exists.
+    python_interpreter = f"{PIPEDREAMS_DIR}/pipedreams/pipeline/tools/Python/{get_the_PY(PIPEDREAMS_DIR)}"
+    python_scripts = f"{python_interpreter}/Scripts"
+
+    launch_trayIcon = f"{this_directory}/UI_trayIcon.pyw"
+
+    # Set paths
+    path_set(
+            launch_dir, 
+            ffmpeg_dir, 
+            python_interpreter, 
+            python_scripts
+            )
+
+    # Check if Virtual env
+    print("Virtual env active: ", bool(os.getenv("VIRTUAL_ENV")))
+
+    # start UI icon (UI_trayIcon.pyw)
     os.startfile(launch_trayIcon)
+
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+
+    run()
