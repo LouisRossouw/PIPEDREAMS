@@ -1,0 +1,6 @@
+art==5.7
+future==0.18.2
+path==16.4.0
+Pillow==9.2.0
+pymel==1.2.0
+PyYAML==6.0
