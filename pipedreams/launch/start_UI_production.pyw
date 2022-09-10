@@ -29,7 +29,15 @@ admin_config = utils.yaml_config(f"{main_path}/admin/admin_config.yaml")
 artist_config = utils.yaml_config(f"{main_path}/admin/artist_config.yaml")
 
 
+def open_PipeLine_Config():
+    """ opens the pipeline_config """
 
+    # Open config
+    config_path = os.path.abspath(__file__)
+    config_path_dir = (f"{os.path.dirname(os.path.dirname(config_path))}")
+    config = yaml.safe_load(open(f'{os.path.dirname(config_path_dir)}/PipeDreams/admin/pipeline_config.yaml', 'r'))
+
+    return(config)
 
 
 def check_admin(userNames):
@@ -103,16 +111,21 @@ def getLatestVersion(directory_path):
 
 
 
-def cmd_line_start(cmd_line_start_path):
+def cmd_line_start(cmd_line_start_path, PipeLine_Config, python_exe):
     """ Opens the cmd line interface """
-    
-    os.startfile(cmd_line_start_path)
+
+    Python_interpreter_type = PipeLine_Config["Python_interpreter_type"]
+    if Python_interpreter_type == "portable":
+        os.system(python_exe + " " + cmd_line_start_path)
+    elif Python_interpreter_type == "system":
+        # start UI.
+        os.startfile(cmd_line_start_path)
 
 
 
 
 
-def run():
+def run(python_exe):
     """ main function of this script """
 
 
@@ -121,6 +134,8 @@ def run():
 
     # check Title
     title = check_title(userName)
+
+    PipeLine_Config = open_PipeLine_Config()
 
     # check user that is accessing the pipeline via cmd tool
     if privilages == "Tivoli":
@@ -138,7 +153,7 @@ def run():
         checkUser_list(pipeline_version, cmd_line_start_path, privilages, title, pipeline_version_path)
 
         # start cmd line interface
-        cmd_line_start(cmd_line_start_path)
+        cmd_line_start(cmd_line_start_path, PipeLine_Config, python_exe)
 
 
     else:
