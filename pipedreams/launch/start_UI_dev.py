@@ -14,7 +14,7 @@ main_path = os.path.dirname(os.path.dirname((__file__)))
 sys.path.append(main_path) # /PIPEDREAMS/PipeDreams
 
 import admin.Tools.utils.Utils as utils
-
+import start_cmd_dev as start_cmd_dev
 
 import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(message)s')
@@ -107,16 +107,23 @@ def getLatestVersion(directory_path):
 
 
 
-def cmd_line_start(cmd_line_start_path, PipeLine_Config):
+def cmd_line_start(cmd_line_start_path, PipeLine_Config, python_exe):
     """ Opens the cmd line interface """
 
-    # start UI.
-    os.startfile(cmd_line_start_path)
+    Python_interpreter_type = PipeLine_Config["Python_interpreter_type"]
+    if Python_interpreter_type == "portable":
+        os.system(python_exe + " " + cmd_line_start_path)
+    elif Python_interpreter_type == "system":
+        # start UI.
+        os.startfile(cmd_line_start_path)
 
 
 
 
-def run():
+
+
+
+def run(python_exe):
     """ main function of this script """
 
 
@@ -145,7 +152,7 @@ def run():
 
         # start cmd line interface
         print(pipeline_version)
-        cmd_line_start(cmd_line_start_path, PipeLine_Config)
+        cmd_line_start(cmd_line_start_path, PipeLine_Config, python_exe)
 
 
     else:
