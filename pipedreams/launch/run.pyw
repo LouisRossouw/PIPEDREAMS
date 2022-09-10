@@ -4,6 +4,7 @@
 
 import os
 import sys
+import UI_trayIcon as trayIcon
 
 
 
@@ -12,7 +13,11 @@ def get_the_PY(PIPEDREAMS_DIR):
         incase there is a unique python version.
     """
     python_dir = f"{PIPEDREAMS_DIR}/pipedreams/pipeline/tools/Python"
-    pyname = os.listdir(python_dir)[0]
+    dir_files = os.listdir(python_dir)
+    for f in dir_files:
+        if f != ".gitignore":
+            pyname = f
+
 
     return(pyname)
 
@@ -47,7 +52,8 @@ def run():
     # Portable Python if exists.
     python_interpreter = f"{PIPEDREAMS_DIR}/pipedreams/pipeline/tools/Python/{get_the_PY(PIPEDREAMS_DIR)}"
     python_scripts = f"{python_interpreter}/Scripts"
-
+    python_exe = f"{python_interpreter}/python.exe"
+    
     launch_trayIcon = f"{this_directory}/UI_trayIcon.pyw"
 
     # Set paths
@@ -62,7 +68,11 @@ def run():
     print("Virtual env active: ", bool(os.getenv("VIRTUAL_ENV")))
 
     # start UI icon (UI_trayIcon.pyw)
-    os.startfile(launch_trayIcon)
+    #os.startfile(launch_trayIcon)
+    trayIcon.main(python_exe)
+    #os.system(f"{python_interpreter}/python.exe " + launch_trayIcon)
+    
+
 
 
 
