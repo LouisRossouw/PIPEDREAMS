@@ -60,6 +60,7 @@ def install_Python(appdata_Python_dir):
     """ Install / coppies over a version of Python, it first tries to copy over python if it exists in pipedream /pipeline/tools/Python directory
         If not, it will then attempt to install it from the internet.
     """
+    print("Installing Python.")
 
     Internal_Python_path = f"{this_dir}/pipedreams/pipeline/tools/python"
     Internal_Python_path_dir = os.listdir(Internal_Python_path)
@@ -88,6 +89,7 @@ def launch_pipedreams(launch_dir):
     """ launches pipedreams tools. """
 
     print("pipedreams launching.")
+    os.startfile(f"{launch_dir}/UI_trayIcon.pyw")
 
 
 
@@ -107,10 +109,7 @@ def startup():
     pipeline_config = utils.yaml_config(f"{this_dir}/pipedreams/admin/pipeline_config.yaml")
 
     appdata_path = os.path.dirname(os.getenv('APPDATA'))
-    Python_dir = f"{appdata_path}/Local/Programs/Python"
-
-
-
+    Python_dir = f"{appdata_path}/Local/Programs/Pythoon"
 
 
     # check if user exists in database directory, if not, check if default Python is installed.
@@ -118,7 +117,6 @@ def startup():
         check_Python(Python_dir)
     else:
         pass
-
 
 
     path_set(
