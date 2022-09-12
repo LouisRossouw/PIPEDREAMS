@@ -1,10 +1,11 @@
 
 """ This file needs to be converted to a .exe and shared as a shortcut to other users machines,
-    - it checks the pipeline_config and chooses to launch the pipeline with the local default Python interpreter
-    or the portable Python interpreter that lives in the /pipedreams/pipeline/tools/Python directory.
+    - before startup it runs a check to see if Python and its packags are installed for this program.
+    - to convert to .exe with pyinstaller installed, in cmd run: pyinstaller --onefile --windowed --icon=app.ico app.py
 """
 
 import os
+import time
 import sys
 import shutil
 import pipedreams.launch.utils as utils
@@ -75,10 +76,11 @@ def install_Python(appdata_Python_dir):
     """ Install / coppies over a version of Python, it first tries to copy over python if it exists in pipedream /pipeline/tools/Python directory
         If not, it will then attempt to install it from the internet.
     """
-    print("Installing Python.")
 
     text = f"No Python found, installing Python \n-{appdata_Python_dir}"
     ctypes.windll.user32.MessageBoxW(0, text, "PipeDreams", 0)
+
+    print("copying Python fils, This may take awhile.")
 
     this_dir = os.path.dirname(sys.argv[0])
     Internal_Python_path = f"{this_dir}/pipedreams/pipeline/tools/python"
@@ -103,6 +105,7 @@ def check_Python(Python_dir):
 
     if os.path.exists(Python_dir) != True:
         print("** Python does not exist")
+        time.sleep(2)
         install_Python(Python_dir)
 
 
@@ -115,18 +118,19 @@ def check_Python_packages(PIPEDREAMS_DIR, pipeline_config):
 
     # System default Python
     os.system(f"pip install -r {PIPEDREAMS_DIR}/pipedreams/admin/requirements/system_requirements.txt")
+    time.sleep(2)
 
     # Maya Python
     path = f"mayapy -m pip install -r {PIPEDREAMS_DIR}/pipedreams/admin/requirements/maya_requirements.txt"
     os.system(path)
-
+    time.sleep(2)
 
 
 
 def launch_pipedreams(launch_dir):
     """ launches pipedreams tools. """
 
-    print("pipedreams launching.")
+    print("\n*** Launching PipeDreams.")
     os.startfile(f"{launch_dir}/UI_trayIcon.pyw")
 
 
@@ -153,6 +157,8 @@ def startup():
 
     # check if user exists in database directory, if not, check if default Python is installed.
     if os.path.exists(f"{usr_data_dir}/{userName}.json") != True:
+        print(f"\n*** User {userName} not in database, setting up:")
+        time.sleep(5)
         check_Python(Python_dir)
         path_set(launch_dir, ffmpeg_dir, Python_dir,)
         check_Python_packages(PIPEDREAMS_DIR, pipeline_config)
