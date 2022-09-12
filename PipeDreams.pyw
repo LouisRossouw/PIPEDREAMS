@@ -46,6 +46,11 @@ def path_set(
 
     if py_version != None:
 
+        # set path to /autodesk/maya/bin our function can find mayapy to pip install packages.
+        ProgramFiles_path = os.environ["ProgramFiles"]
+        mayapy_path = f"{ProgramFiles_path}/Autodesk/Maya2022/bin"
+
+        # set paths to default python.
         python_interpreter = f"{Python_dir}/{py_version}"
         python_scripts = f"{python_interpreter}/Scripts"
 
@@ -54,11 +59,13 @@ def path_set(
         os.environ['PATH'] += os.pathsep + ffmpeg_dir
         os.environ['PATH'] += os.pathsep + python_interpreter
         os.environ['PATH'] += os.pathsep + python_scripts
+        os.environ['PATH'] += os.pathsep + mayapy_path        
 
         print("*** Set paths:")
         print(ffmpeg_dir)
         print(python_interpreter)
         print(python_scripts)
+        print("*** ", mayapy_path)
 
 
 
@@ -106,13 +113,11 @@ def check_Python_packages(PIPEDREAMS_DIR, pipeline_config):
 
     maya_version = pipeline_config["maya_version"]
 
-
     # System default Python
     os.system(f"pip install -r {PIPEDREAMS_DIR}/pipedreams/admin/requirements/system_requirements.txt")
 
     # Maya Python
-    ProgramFiles_path = os.environ["ProgramFiles"]
-    path = f"{ProgramFiles_path}/Autodesk/Maya{str(maya_version)}/bin/mayapy.exe -m pip install -r {PIPEDREAMS_DIR}/pipedreams/admin/requirements/maya_requirements.txt"
+    path = f"mayapy -m pip install -r {PIPEDREAMS_DIR}/pipedreams/admin/requirements/maya_requirements.txt"
     os.system(path)
 
 
