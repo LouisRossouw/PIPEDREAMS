@@ -17,11 +17,30 @@ import admin.Tools.utils.Utils as utils
 
 
 import logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(message)s')
 
 
+# create logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
+# create file handler which logs even debug messages
+fh = logging.FileHandler('pipedreams/admin/logs/DreamLOG.log')
+fh.setLevel(logging.DEBUG)
 
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
+
+logger.disabled = False
 
 
 
@@ -46,6 +65,7 @@ def check_admin(userNames):
         for usr in admin_list:
             if userNames == usr:
                 privilages.append(admin)
+                logger.info(f"{userNames} Admin = True")
 
     return(privilages)
 
@@ -62,6 +82,7 @@ def check_title(userNames):
         for usr in team_list:
             if userNames == usr:
                 title.append(role)
+                logger.info(f"{userNames} Title = {role}")
 
     return(title)
 
@@ -110,6 +131,7 @@ def getLatestVersion(directory_path):
 def cmd_line_start(cmd_line_start_path):
     """ Opens the cmd line interface """
 
+    logger.info("Attemping to load dcc launcher UI")
     os.startfile(cmd_line_start_path)
 
 
@@ -119,6 +141,8 @@ def cmd_line_start(cmd_line_start_path):
 def run():
     """ main function of this script """
 
+    logger.info(f"\n****")
+    logger.info(f"RUNBY: {userName}")
 
     # check if part of admin team
     privilages = check_admin(userName)[0]
@@ -149,6 +173,8 @@ def run():
     else:
         pass
         # launch cmd line for artist with basic privilages
+
+
 
 
 
