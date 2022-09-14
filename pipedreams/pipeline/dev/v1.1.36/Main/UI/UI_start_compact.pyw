@@ -20,6 +20,33 @@ from ctypes import windll
 windll.shcore.SetProcessDpiAwareness(1)
 
 
+import logging
+
+
+# create logger
+logger = logging.getLogger("DCC Launcher UI")
+logger.setLevel(logging.DEBUG)
+
+# create file handler which logs even debug messages
+fh = logging.FileHandler('pipedreams/admin/logs/DreamLOG.log')
+fh.setLevel(logging.DEBUG)
+
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
+
+logger.disabled = False
+
+
 def screen_size():
     img = ImageGrab.grab()
     return (img.size)
@@ -184,218 +211,227 @@ def get_UI_config():
 def PipeDreams_UI(config):
     """ The Main PipeDreams UI """
 
-    UI_Config = get_UI_config()
+    try:
 
-    # UI colors
-    THEME = UI_Config["THEME"]
-    TAB_BG_COLOR = UI_Config["TAB_BG_COLOR"]
-    FONT_HEADING = UI_Config["FONT_HEADING"]
+        UI_Config = get_UI_config()
 
-    TEXT_COLOR_MULTILINE = UI_Config["TEXT_COLOR_MULTILINE"]
-    FONT_MULTILINE = UI_Config["FONT_MULTILINE"]
-    BG_MULTILINE = UI_Config["BG_MULTILINE"]
+        # UI colors
+        THEME = UI_Config["THEME"]
+        TAB_BG_COLOR = UI_Config["TAB_BG_COLOR"]
+        FONT_HEADING = UI_Config["FONT_HEADING"]
 
-    WINDOW_TEXT_COLOR = UI_Config["WINDOW_TEXT_COLOR"]
-    WINDOW_BG_COLOR = UI_Config["WINDOW_BG_COLOR"]
+        TEXT_COLOR_MULTILINE = UI_Config["TEXT_COLOR_MULTILINE"]
+        FONT_MULTILINE = UI_Config["FONT_MULTILINE"]
+        BG_MULTILINE = UI_Config["BG_MULTILINE"]
 
-    # UI Position
-    WINDOW_NUDGE = UI_Config["WINDOW_NUDGE"]
-    WINDOW_SIZE = UI_Config["WINDOW_SIZE"]
+        WINDOW_TEXT_COLOR = UI_Config["WINDOW_TEXT_COLOR"]
+        WINDOW_BG_COLOR = UI_Config["WINDOW_BG_COLOR"]
 
-
-
-
-
-
-    returnPathsNames = getPaths()
-    icons_dict = returnIconPath(returnPathsNames[3])
-
-    sg.theme(THEME) 
-
-    # Config
-    Pipeline_name = config["Pipeline_name"]
-    main_projects_path = config["Pipeline_Path"]
-
-
-    # TABS
-    Pipedreams_TAB_01 = [
-                            [sg.Text("Main: " + main_projects_path)],
-                            [sg.Text('_'  * 80)],
-
-                            [sg.Text("SetShot: "), sg.InputCombo((get_all_projects_list(main_projects_path, config)), enable_events=True, key="MAIN_PROJECT", size=(10,5)), 
-                            sg.InputCombo(("None"), enable_events=True,  key="SUB_PROJECT", size=(10,5)),
-                            sg.InputCombo(('None'), enable_events=True,  key="SHOT", size=(10,15)),
-                            sg.Button("", enable_events=True, image_filename=icons_dict["maya_icon"],
-                            size=(1,10), tooltip="Launch Maya", key="Maya"), sg.Button("", enable_events=True, image_filename=icons_dict["houdini_icon"], 
-                            size=(1,10),tooltip="Launch Houdini")],
-
-                        ]
-       
-
-
-
-    Utils_TAB_02 = [
-                        [sg.Button('Create Project', enable_events=True, key="-CreateProject-")],
-                   ]
-
-    # The TabgGroup layout - it must contain only Tabs
-    tab_group_layout = [
-                            [sg.Tab('Projects', Pipedreams_TAB_01, font=FONT_HEADING, key='-TAB1-'),
-                            sg.Tab('Utils', Utils_TAB_02, visible=True, key='-TAB2-'),]
-                        ]
-
-    # The window layout - defines the entire window
-    layout = [
-
-                [sg.TabGroup(tab_group_layout, enable_events=True, key='-TABGROUP-',background_color=TAB_BG_COLOR)],
-
-				[sg.Multiline(
-                            size=(5,2), 
-                            font=FONT_MULTILINE, expand_x=True, expand_y=True, write_only=False,
-                            reroute_stdout=True, reroute_stderr=True, echo_stdout_stderr=True, autoscroll=True, auto_refresh=True, 
-                            background_color=BG_MULTILINE,text_color=TEXT_COLOR_MULTILINE, key="MULTI_TEXTBOX"
-                            )],
-
-             ]
+        # UI Position
+        WINDOW_NUDGE = UI_Config["WINDOW_NUDGE"]
+        WINDOW_SIZE = UI_Config["WINDOW_SIZE"]
 
 
 
 
-    if returnPathsNames[0] != "Production":
-        Window_Name = 'PipeDreams_' + returnPathsNames[0] + ' ' + returnPathsNames[1]
-    else:
-        Window_Name = 'PipeDreams ' + returnPathsNames[1]
 
-    window = sg.Window(
-                        Window_Name, 
-                        layout,
-                        no_titlebar=False, 
-                        resizable=False, 
-                        use_custom_titlebar=True, 
-                        finalize=False, 
-                        keep_on_top=True,
-                        titlebar_background_color=WINDOW_BG_COLOR,
-                        location=(screen_size()[0] - WINDOW_NUDGE[0], screen_size()[1] - WINDOW_NUDGE[1]),
-                        size=(WINDOW_SIZE[0],WINDOW_SIZE[1]),
-                        alpha_channel=1,
-                        titlebar_text_color=WINDOW_TEXT_COLOR,
-                        icon=icons_dict["main_icon"],
-                        titlebar_icon=icons_dict["main_icon"],
-                        
 
-                        )
+        returnPathsNames = getPaths()
+        icons_dict = returnIconPath(returnPathsNames[3])
 
-    tab_keys = ('-TAB1-','-TAB2-','-TAB3-', '-TAB4-')
+        sg.theme(THEME) 
 
-    while True:
+        # Config
+        Pipeline_name = config["Pipeline_name"]
+        main_projects_path = config["Pipeline_Path"]
+
+
+        # TABS
+        Pipedreams_TAB_01 = [
+                                [sg.Text("Main: " + main_projects_path)],
+                                [sg.Text('_'  * 80)],
+
+                                [sg.Text("SetShot: "), sg.InputCombo((get_all_projects_list(main_projects_path, config)), enable_events=True, key="MAIN_PROJECT", size=(10,5)), 
+                                sg.InputCombo(("None"), enable_events=True,  key="SUB_PROJECT", size=(10,5)),
+                                sg.InputCombo(('None'), enable_events=True,  key="SHOT", size=(10,15)),
+                                sg.Button("", enable_events=True, image_filename=icons_dict["maya_icon"],
+                                size=(1,10), tooltip="Launch Maya", key="Maya"), sg.Button("", enable_events=True, image_filename=icons_dict["houdini_icon"], 
+                                size=(1,10),tooltip="Launch Houdini")],
+
+                            ]
         
-        event, values = window.read()
-
-
-        if event == sg.WIN_CLOSED:
-            break
 
 
 
-        if event == "-CreateProject-":
-            UI_create_project.UI(config, icons_dict["main_icon"])
+        Utils_TAB_02 = [
+                            [sg.Button('Create Project', enable_events=True, key="-CreateProject-")],
+                    ]
+
+        # The TabgGroup layout - it must contain only Tabs
+        tab_group_layout = [
+                                [sg.Tab('Projects', Pipedreams_TAB_01, font=FONT_HEADING, key='-TAB1-'),
+                                sg.Tab('Utils', Utils_TAB_02, visible=True, key='-TAB2-'),]
+                            ]
+
+        # The window layout - defines the entire window
+        layout = [
+
+                    [sg.TabGroup(tab_group_layout, enable_events=True, key='-TABGROUP-',background_color=TAB_BG_COLOR)],
+
+                    [sg.Multiline(
+                                size=(5,2), 
+                                font=FONT_MULTILINE, expand_x=True, expand_y=True, write_only=False,
+                                reroute_stdout=True, reroute_stderr=True, echo_stdout_stderr=True, autoscroll=True, auto_refresh=True, 
+                                background_color=BG_MULTILINE,text_color=TEXT_COLOR_MULTILINE, key="MULTI_TEXTBOX"
+                                )],
+
+                ]
 
 
-        if event == 'Select':
-            window[tab_keys[int(values['-IN-'])-1]].select()
 
 
+        if returnPathsNames[0] != "Production":
+            Window_Name = 'PipeDreams_' + returnPathsNames[0] + ' ' + returnPathsNames[1]
+        else:
+            Window_Name = 'PipeDreams ' + returnPathsNames[1]
+
+        window = sg.Window(
+                            Window_Name, 
+                            layout,
+                            no_titlebar=False, 
+                            resizable=False, 
+                            use_custom_titlebar=True, 
+                            finalize=False, 
+                            keep_on_top=True,
+                            titlebar_background_color=WINDOW_BG_COLOR,
+                            location=(screen_size()[0] - WINDOW_NUDGE[0], screen_size()[1] - WINDOW_NUDGE[1]),
+                            size=(WINDOW_SIZE[0],WINDOW_SIZE[1]),
+                            alpha_channel=1,
+                            titlebar_text_color=WINDOW_TEXT_COLOR,
+                            icon=icons_dict["main_icon"],
+                            titlebar_icon=icons_dict["main_icon"],
+                            
+
+                            )
+
+        tab_keys = ('-TAB1-','-TAB2-','-TAB3-', '-TAB4-')
+
+        while True:
             
-        # SetShot
-        if event == 'MAIN_PROJECT':
-            selected_MAIN_project = values["MAIN_PROJECT"]
-            list_projects = get_all_SUB_projects_list(f'{main_projects_path}/{selected_MAIN_project}',)
-            window['SUB_PROJECT'].update(value='', values=list_projects)
-            window["MULTI_TEXTBOX"].update(selected_MAIN_project)
-
-            print(str(os.listdir(f'{main_projects_path}/{selected_MAIN_project}')))
-
-        # SetShot
-        if event == 'SUB_PROJECT':
-            selected_SUB_project = values["SUB_PROJECT"]
-            window['SHOT'].update(value='', values=get_all_SUB_projects_list(f'{main_projects_path}/{selected_MAIN_project}/{selected_SUB_project}/shots'))
-            window["MULTI_TEXTBOX"].update(selected_MAIN_project + "/" +selected_SUB_project + ":")
-
-            # prints info on the current selected project
-            pipeline_data_path = (f'{main_projects_path}/{selected_MAIN_project}/{selected_SUB_project}\\data\\pipeline\\pipeline_data.yaml')
-            project_data_print(
-                                type="SUB_PROJECT", 
-                                pipeline_data=pipeline_data_path, 
-                                )
-            
+            event, values = window.read()
 
 
-        # SetShot
-        if event == 'SHOT':
-            selected_SHOT = values["SHOT"]
-            setshot_text = (f'{main_projects_path}/{selected_MAIN_project}/{selected_SUB_project}/shots/{selected_SHOT}')
-            window["MULTI_TEXTBOX"].update("Shot Set to: \n\n" + setshot_text)
-
-            
-
-		# Launch Maya
-        if event == "Maya":
-            window["MULTI_TEXTBOX"].update("")
-            art.tprint("Maya")
-            time.sleep(1)
-            window["MULTI_TEXTBOX"].update("")
-            dots = 'Launching Maya.'
-            for i in range(30):
-                time.sleep(0.01)
-                dots += "🔺"
-                print(dots)
+            if event == sg.WIN_CLOSED:
+                break
 
 
 
-            text = ("*** Maya PipeDreams toolSet: " + returnPathsNames[0] + "_" + returnPathsNames[1])
-            window["MULTI_TEXTBOX"].update(text)
-
-            MAIN_PROJECT = values["MAIN_PROJECT"]
-            SUB_PROJECT = values["SUB_PROJECT"]
-            SHOT = values["SHOT"]
-            working_dir = f'{main_projects_path}/{MAIN_PROJECT}/{SUB_PROJECT}/shots/{SHOT}'
-            usr_input = "ma"
-            project_name = f'{MAIN_PROJECT}_{SUB_PROJECT}_{SHOT}'
-            Documents_pipeline_dir = Documents_pipe(Pipeline_name)
-            ss = "project"
-
-            print(f'Launching Maya')
-            print(working_dir)
-
-            notification(DCC = "Maya",
-                        Title = "Launching",
-                        Message = project_name,
-                        icons_dict_input = icons_dict
-                        )
-            
-
-            # This launches a new process
-            threading.Thread(target=ssUtils.open_application, args=(        usr_input, 
-                                                                            working_dir, 
-                                                                            ss, 
-                                                                            project_name,
-                                                                            MAIN_PROJECT,
-                                                                            SUB_PROJECT,
-                                                                            SHOT,
-                                                                            config,
-                                                                            Documents_pipeline_dir), 
-
-                                                                            daemon=True).start()
-            
-            
+            if event == "-CreateProject-":
+                UI_create_project.UI(config, icons_dict["main_icon"])
 
 
-        if event == "-TASK_LIST-":
-            window['-OUTPUT-'].update(values="test")
+            if event == 'Select':
+                window[tab_keys[int(values['-IN-'])-1]].select()
 
 
-    window.close()
+                
+            # SetShot
+            if event == 'MAIN_PROJECT':
+                selected_MAIN_project = values["MAIN_PROJECT"]
+                list_projects = get_all_SUB_projects_list(f'{main_projects_path}/{selected_MAIN_project}',)
+                window['SUB_PROJECT'].update(value='', values=list_projects)
+                window["MULTI_TEXTBOX"].update(selected_MAIN_project)
 
+                print(str(os.listdir(f'{main_projects_path}/{selected_MAIN_project}')))
+
+            # SetShot
+            if event == 'SUB_PROJECT':
+                selected_SUB_project = values["SUB_PROJECT"]
+                window['SHOT'].update(value='', values=get_all_SUB_projects_list(f'{main_projects_path}/{selected_MAIN_project}/{selected_SUB_project}/shots'))
+                window["MULTI_TEXTBOX"].update(selected_MAIN_project + "/" +selected_SUB_project + ":")
+
+                # prints info on the current selected project
+                pipeline_data_path = (f'{main_projects_path}/{selected_MAIN_project}/{selected_SUB_project}\\data\\pipeline\\pipeline_data.yaml')
+                project_data_print(
+                                    type="SUB_PROJECT", 
+                                    pipeline_data=pipeline_data_path, 
+                                    )
+                
+
+
+            # SetShot
+            if event == 'SHOT':
+                selected_SHOT = values["SHOT"]
+                setshot_text = (f'{main_projects_path}/{selected_MAIN_project}/{selected_SUB_project}/shots/{selected_SHOT}')
+                window["MULTI_TEXTBOX"].update("Shot Set to: \n\n" + setshot_text)
+
+                
+
+            # Launch Maya
+            if event == "Maya":
+                window["MULTI_TEXTBOX"].update("")
+                art.tprint("Maya")
+                time.sleep(1)
+                window["MULTI_TEXTBOX"].update("")
+                dots = 'Launching Maya.'
+                for i in range(30):
+                    time.sleep(0.01)
+                    dots += "🔺"
+                    print(dots)
+
+
+
+                text = ("*** Maya PipeDreams toolSet: " + returnPathsNames[0] + "_" + returnPathsNames[1])
+                window["MULTI_TEXTBOX"].update(text)
+
+                MAIN_PROJECT = values["MAIN_PROJECT"]
+                SUB_PROJECT = values["SUB_PROJECT"]
+                SHOT = values["SHOT"]
+                working_dir = f'{main_projects_path}/{MAIN_PROJECT}/{SUB_PROJECT}/shots/{SHOT}'
+                usr_input = "ma"
+                project_name = f'{MAIN_PROJECT}_{SUB_PROJECT}_{SHOT}'
+                Documents_pipeline_dir = Documents_pipe(Pipeline_name)
+                ss = "project"
+
+                print(f'Launching Maya')
+                print(working_dir)
+
+                notification(DCC = "Maya",
+                            Title = "Launching",
+                            Message = project_name,
+                            icons_dict_input = icons_dict
+                            )
+
+
+                try:
+                    # This launches a new process
+                    threading.Thread(target=ssUtils.open_application, args=(        usr_input, 
+                                                                                    working_dir, 
+                                                                                    ss, 
+                                                                                    project_name,
+                                                                                    MAIN_PROJECT,
+                                                                                    SUB_PROJECT,
+                                                                                    SHOT,
+                                                                                    config,
+                                                                                    Documents_pipeline_dir), 
+
+                                                                                    daemon=True).start()
+                except Exception as e:
+                    print(e)
+                    logger.info("launch application: " + str(e))
+                
+                logger.info(f"Launching Maya")
+                logger.info(f"{working_dir}")
+
+
+            if event == "-TASK_LIST-":
+                window['-OUTPUT-'].update(values="test")
+
+
+        window.close()
+    except Exception as e:
+        print(e)
+        logger.info("UI_start_compact DEV: " + str(e))
 
 
 
