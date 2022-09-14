@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import logging
 import PySimpleGUI as sg
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__))) #/PIPEDREAMS/PipeDreams
@@ -14,12 +15,33 @@ import admin.Tools.admin as admin
 import functions.icon_BG_function as BG_function
 
 
+logger = logging.getLogger("UI_trayIcon")
+# create file handler which logs even debug messages
+fh = logging.FileHandler('pipedreams/admin/logs/DreamLOG.log')
+fh.setLevel(logging.DEBUG)
+
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
+
+logger.disabled = False
 
 
 
 def Clear_Cache():
     """ Clears system cache """
-    print("yess")
+    print("wip")
+
+
 
 def returnConfig():
     """ returns the config for the toolbar """
@@ -143,6 +165,8 @@ def main():
     anim_count = 0
     performFunctions_count = 0
 
+    logger.info("UI_trayIcon loaded.")
+
     # UI loop
     while True:
 
@@ -222,6 +246,8 @@ def main():
     if window:
         window.close()
 
-
-main()
+try:
+    main()
+except Exception as e:
+    logger.info("UI_trayIcon: " + str(e))
 
