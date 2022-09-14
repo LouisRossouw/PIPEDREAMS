@@ -12,6 +12,33 @@ import pipedreams.launch.utils as utils
 
 import ctypes  # An included library with Python install.   
 
+import logging
+
+
+
+
+# create logger
+logger = logging.getLogger("PipeDreams_startup")
+logger.setLevel(logging.DEBUG)
+
+# create file handler which logs even debug messages
+fh = logging.FileHandler('pipedreams/admin/logs/DreamLOG.log')
+fh.setLevel(logging.DEBUG)
+
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
+
+logger.disabled = False
 
 
 
@@ -47,6 +74,8 @@ def path_set(
 
     if py_version != None:
 
+        logger.info(f"Python Versin: {py_version}")
+
         # set path to /autodesk/maya/bin our function can find mayapy to pip install packages.
         ProgramFiles_path = os.environ["ProgramFiles"]
         mayapy_path = f"{ProgramFiles_path}/Autodesk/Maya2022/bin"
@@ -62,11 +91,11 @@ def path_set(
         os.environ['PATH'] += os.pathsep + python_scripts
         os.environ['PATH'] += os.pathsep + mayapy_path        
 
-        print("*** Set paths:")
-        print(ffmpeg_dir)
-        print(python_interpreter)
-        print(python_scripts)
-        print("*** ", mayapy_path)
+        logger.info("*** Set paths:")
+        logger.info(ffmpeg_dir)
+        logger.info(python_interpreter)
+        logger.info(python_scripts)
+        logger.info(mayapy_path)
 
 
 
@@ -80,7 +109,7 @@ def install_Python(appdata_Python_dir):
     text = f"No Python found, installing Python \n-{appdata_Python_dir}"
     ctypes.windll.user32.MessageBoxW(0, text, "PipeDreams", 0)
 
-    print("copying Python fils, This may take awhile.")
+    logger.info("copying Python fils, This may take awhile.")
 
     this_dir = os.path.dirname(sys.argv[0])
     Internal_Python_path = f"{this_dir}/pipedreams/pipeline/tools/python"
@@ -102,13 +131,14 @@ def check_Python(Python_dir):
     """ Check if default Python is installed, if not, install it """
 
     PY_version = os.system("py --version")
-
+    
     if os.path.exists(Python_dir) != True:
-        print("** Python does not exist")
+        logger.info("** Python does not exist")
         time.sleep(2)
         install_Python(Python_dir)
 
-
+    else:
+        logger.info("Python exists.")
 
 
 def check_Python_packages(PIPEDREAMS_DIR, pipeline_config):
@@ -130,8 +160,11 @@ def check_Python_packages(PIPEDREAMS_DIR, pipeline_config):
 def launch_pipedreams(launch_dir):
     """ launches pipedreams tools. """
 
-    print("\n*** Launching PipeDreams.")
-    os.startfile(f"{launch_dir}/UI_trayIcon.pyw")
+    logger.info("*** Launching PipeDreams.")
+    try:
+        os.startfile(f"{launch_dir}/UI_trayIcon.pyw")
+    except Exception as e:
+        logger.info(str(e))
 
 
 
@@ -154,10 +187,10 @@ def startup():
     appdata_path = os.path.dirname(os.getenv('APPDATA'))
     Python_dir = f"{appdata_path}/Local/Programs/Python"
 
-
+    logger.info(f"{userName} : PipeDreams Startup .. ")
     # check if user exists in database directory, if not, check if default Python is installed.
     if os.path.exists(f"{usr_data_dir}/{userName}.json") != True:
-        print(f"\n*** User {userName} not in database, setting up:")
+        logger.info(f"\n*** User {userName} not in database, setting up:")
         time.sleep(5)
         check_Python(Python_dir)
         path_set(launch_dir, ffmpeg_dir, Python_dir,)
