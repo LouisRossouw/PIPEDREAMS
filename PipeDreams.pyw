@@ -64,8 +64,11 @@ def path_set(
             launch_dir, 
             ffmpeg_dir, 
             Python_dir,
+            pipeline_config
             ):
     """ sets system paths to env and other tools like ffmpeg """
+
+    maya_version = pipeline_config["maya_version"]
 
     try:
         py_version = get_the_PY(Python_dir)
@@ -78,7 +81,7 @@ def path_set(
 
         # set path to /autodesk/maya/bin our function can find mayapy to pip install packages.
         ProgramFiles_path = os.environ["ProgramFiles"]
-        mayapy_path = f"{ProgramFiles_path}/Autodesk/Maya2022/bin"
+        mayapy_path = f"{ProgramFiles_path}/Autodesk/Maya{str(maya_version)}/bin"
 
         # set paths to default python.
         python_interpreter = f"{Python_dir}/{py_version}"
@@ -193,7 +196,7 @@ def startup():
         logger.info(f"\n*** User {userName} not in database, setting up:")
         time.sleep(5)
         check_Python(Python_dir)
-        path_set(launch_dir, ffmpeg_dir, Python_dir,)
+        path_set(launch_dir, ffmpeg_dir, Python_dir, pipeline_config)
         check_Python_packages(PIPEDREAMS_DIR, pipeline_config)
     else:
         pass
@@ -203,6 +206,7 @@ def startup():
             launch_dir, 
             ffmpeg_dir, 
             Python_dir, 
+            pipeline_config
             )
 
 
