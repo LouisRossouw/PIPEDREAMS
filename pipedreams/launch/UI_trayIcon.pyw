@@ -167,6 +167,7 @@ def main():
 
     logger.info("UI_trayIcon loaded.")
 
+
     # UI loop
     while True:
 
@@ -241,13 +242,11 @@ def main():
                                                         config)
 
 
-
     tray.close()
     if window:
         window.close()
 
 try:
     main()
-except Exception as e:
-    logger.info("UI_trayIcon: " + str(e))
-
+except Exception as error:
+    logger.exception(error)
