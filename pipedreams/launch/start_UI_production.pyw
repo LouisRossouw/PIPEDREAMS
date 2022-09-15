@@ -16,10 +16,32 @@ sys.path.append(main_path) # /PIPEDREAMS/PipeDreams
 
 import admin.Tools.utils.Utils as utils
 
+import logging
 
 
 
+# create logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
+# create file handler which logs even debug messages
+fh = logging.FileHandler('pipedreams/admin/logs/DreamLOG.log')
+fh.setLevel(logging.DEBUG)
+
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
+
+logger.disabled = False
 
 
 
@@ -162,6 +184,7 @@ def run():
         # start cmd line interface
         cmd_line_start(cmd_line_start_path)
 
+        logger.warning(f"{userName} accessing production build {str(pipeline_version)}")
 
 
 
