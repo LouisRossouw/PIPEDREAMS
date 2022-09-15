@@ -164,7 +164,7 @@ def run():
         print(userName, privilages, title)
 
         # get path to dev directory to launch the latest dev pipeline
-        dev_path = getDevPath()
+
         pipeline_version = getLatestVersion(dev_path)
         pipeline_version_path = f"{dev_path}\{pipeline_version}"
         cmd_line_start_path = f"{dev_path}/{pipeline_version}/Main/UI/UI_start_compact.pyw"
@@ -179,11 +179,14 @@ def run():
 
 
     else:
-        pass
-
-        text = f"{userName} | you need Admin rights to access dev build."
+        
+        # Denied access
+        dev_path = getDevPath()
+        pipeline_version = getLatestVersion(dev_path)
+        text = f"{userName} | you need Admin rights to access dev build {str(pipeline_version)}."
         ctypes.windll.user32.MessageBoxW(0, text, "PipeDreams", 0)
-        # launch cmd line for artist with basic privilages
+        logger.warning(f"{userName} attempting to access Dev build {str(pipeline_version)} - access denied.")
+
 
 
 
