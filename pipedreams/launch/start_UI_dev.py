@@ -67,9 +67,7 @@ def check_admin(userNames):
             if userNames == usr:
                 privilages.append(admin)
                 logger.info(f"{userNames} Admin = True")
-            else:
-                logger.warning(f" ! !!!!! {userNames} Admin = False")
-                privilages.append("None")
+            
 
     return(privilages)
 
@@ -149,11 +147,16 @@ def run():
     logger.info(f"RUNBY: {userName}")
 
     # check if part of admin team
-    privilages = check_admin(userName)[0]
-
+    try:
+        privilages = check_admin(userName)[0]
+    except IndexError:
+        privilages = None
+        pass
 
     # check Title
     title = check_title(userName)
+
+    print(userName, title, privilages)
 
     # check user that is accessing the pipeline via cmd tool
     if privilages == "Tivoli":
