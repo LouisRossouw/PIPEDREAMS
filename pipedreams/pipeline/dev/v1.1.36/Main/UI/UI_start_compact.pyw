@@ -19,16 +19,17 @@ import Utils.UI_create_project as UI_create_project
 from ctypes import windll
 windll.shcore.SetProcessDpiAwareness(1)
 
-
 import logging
 
+
+userName = os.environ['COMPUTERNAME']
 
 # create logger
 logger = logging.getLogger("DCC Launcher UI")
 logger.setLevel(logging.DEBUG)
 
 # create file handler which logs even debug messages
-fh = logging.FileHandler('pipedreams/admin/logs/DreamLOG.log')
+fh = logging.FileHandler(f'pipedreams/admin/logs/{userName}_DreamLOG.log')
 fh.setLevel(logging.DEBUG)
 
 # create console handler with a higher log level
