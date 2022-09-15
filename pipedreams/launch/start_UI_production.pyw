@@ -20,12 +20,21 @@ import logging
 
 
 
+
+userName = os.environ['COMPUTERNAME']
+
+admin_config = utils.yaml_config(f"{main_path}/admin/admin_config.yaml")
+artist_config = utils.yaml_config(f"{main_path}/admin/artist_config.yaml")
+
+
+
+
 # create logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 # create file handler which logs even debug messages
-fh = logging.FileHandler('pipedreams/admin/logs/DreamLOG.log')
+fh = logging.FileHandler(f'pipedreams/admin/logs/{userName}_DreamLOG.log')
 fh.setLevel(logging.DEBUG)
 
 # create console handler with a higher log level
@@ -42,13 +51,6 @@ logger.addHandler(fh)
 logger.addHandler(ch)
 
 logger.disabled = False
-
-
-
-userName = os.environ['COMPUTERNAME']
-
-admin_config = utils.yaml_config(f"{main_path}/admin/admin_config.yaml")
-artist_config = utils.yaml_config(f"{main_path}/admin/artist_config.yaml")
 
 
 
