@@ -14,10 +14,11 @@ import admin.Tools.admin as admin
 
 import functions.icon_BG_function as BG_function
 
+userName = os.environ['COMPUTERNAME']
 
 logger = logging.getLogger("UI_trayIcon")
 # create file handler which logs even debug messages
-fh = logging.FileHandler('pipedreams/admin/logs/DreamLOG.log')
+fh = logging.FileHandler(f'pipedreams/admin/logs/{userName}_DreamLOG.log')
 fh.setLevel(logging.DEBUG)
 
 # create console handler with a higher log level
