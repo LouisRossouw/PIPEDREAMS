@@ -43,6 +43,8 @@ def check_admin(userNames):
         for usr in admin_list:
             if userNames == usr:
                 privilages.append(admin)
+            else:
+                privilages.append("None")
 
     return(privilages)
 
@@ -125,7 +127,7 @@ def run():
     # check user that is accessing the pipeline via cmd tool
     if privilages == "Tivoli":
 
-        print(userName, privilages, title)
+        print(userName, privilages, title[0])
 
         # get path to dev directory to launch the latest dev pipeline
         production_path = getProductionPath()
@@ -141,10 +143,24 @@ def run():
         cmd_line_start(cmd_line_start_path)
 
 
+
     else:
-        pass
         # launch cmd line for artist with basic privilages
 
+        print(userName, privilages, title)
+
+        # get path to dev directory to launch the latest dev pipeline
+        production_path = getProductionPath()
+        pipeline_version = getLatestVersion(production_path)
+        pipeline_version_path = f"{production_path}/{pipeline_version}"
+        cmd_line_start_path = f"{production_path}/{pipeline_version}/Main/UI/UI_start_compact.pyw"
+
+
+        # check and update user list details
+        checkUser_list(pipeline_version, cmd_line_start_path, privilages, title, pipeline_version_path)
+
+        # start cmd line interface
+        cmd_line_start(cmd_line_start_path)
 
 
 
