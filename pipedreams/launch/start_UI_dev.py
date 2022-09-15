@@ -9,6 +9,7 @@ import sys
 import yaml
 import time
 import json
+import ctypes
 
 main_path = os.path.dirname(os.path.dirname((__file__)))
 sys.path.append(main_path) # /PIPEDREAMS/PipeDreams
@@ -66,6 +67,9 @@ def check_admin(userNames):
             if userNames == usr:
                 privilages.append(admin)
                 logger.info(f"{userNames} Admin = True")
+            else:
+                logger.warning(f" ! !!!!! {userNames} Admin = False")
+                privilages.append("None")
 
     return(privilages)
 
@@ -147,6 +151,7 @@ def run():
     # check if part of admin team
     privilages = check_admin(userName)[0]
 
+
     # check Title
     title = check_title(userName)
 
@@ -172,6 +177,9 @@ def run():
 
     else:
         pass
+
+        text = f"{userName} | you need Admin rights to access dev build."
+        ctypes.windll.user32.MessageBoxW(0, text, "PipeDreams", 0)
         # launch cmd line for artist with basic privilages
 
 
