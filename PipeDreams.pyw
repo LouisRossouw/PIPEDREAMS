@@ -15,14 +15,14 @@ import ctypes  # An included library with Python install.
 import logging
 
 
-
+userName = os.environ['COMPUTERNAME']
 
 # create logger
 logger = logging.getLogger("PipeDreams_startup")
 logger.setLevel(logging.DEBUG)
 
 # create file handler which logs even debug messages
-fh = logging.FileHandler('pipedreams/admin/logs/DreamLOG.log')
+fh = logging.FileHandler(f'pipedreams/admin/logs/{userName}_DreamLOG.log')
 fh.setLevel(logging.DEBUG)
 
 # create console handler with a higher log level
