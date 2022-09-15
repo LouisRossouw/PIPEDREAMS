@@ -429,9 +429,11 @@ def PipeDreams_UI(config):
 
 
         window.close()
+
+
     except Exception as e:
         print(e)
-        logger.info("UI_start_compact DEV: " + str(e))
+        logger.exception(e)
 
 
 
