@@ -43,6 +43,7 @@ BG_MULTILINE: "black"
 WINDOW_TEXT_COLOR: "white"
 WINDOW_BG_COLOR: "black"
 
+MINIMIZED_TRAYICON: False
 
 
 ######### CREATE PROJECT UI #########
