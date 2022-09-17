@@ -163,9 +163,16 @@ def check_Python_packages(PIPEDREAMS_DIR, pipeline_config):
 def launch_pipedreams(launch_dir):
     """ launches pipedreams tools. """
 
-    logger.info("*** Launching PipeDreams.")
+    MINIMIZED_TRAYICON = utils.get_UI_toolBar_config()["MINIMIZED_TRAYICON"]
+    
+    # Launches the icon either minimized or on the side of the monitor.
     try:
-        os.startfile(f"{launch_dir}/UI_trayIcon.pyw")
+        if MINIMIZED_TRAYICON == False:
+            logger.info("*** Launching PipeDreams Tool Bar.")
+            os.startfile(f"{launch_dir}/UI_trayIcon.pyw")
+        elif MINIMIZED_TRAYICON == True:
+            logger.info("*** Launching PipeDreams Minimized Tray Icon.")
+            os.startfile(f"{launch_dir}/UI_trayIcon_mini.pyw")
     except Exception as e:
         logger.info(str(e))
 
@@ -186,7 +193,7 @@ def startup():
     usr_data_dir = f"{PIPEDREAMS_DIR}/pipedreams/admin/data/user_data_base"
     pipeline_config = utils.yaml_config(f"{PIPEDREAMS_DIR}/pipedreams/admin/pipeline_config.yaml")
 
-
+    
     appdata_path = os.path.dirname(os.getenv('APPDATA'))
     Python_dir = f"{appdata_path}/Local/Programs/Python"
 
