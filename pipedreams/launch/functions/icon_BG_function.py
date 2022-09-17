@@ -26,8 +26,6 @@ def performFunctions(performFunctions_count, PERFORMFUNCTION_ITERATION_COUNT, ic
         function_01(config)
         function_02(config)
         logger_newday(logger)
-        print("this is running")
-
 
         # just a visual refrence to show that its performing this function
         # quick_signal.read(timeout=100)
