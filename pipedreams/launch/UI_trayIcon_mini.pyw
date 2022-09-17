@@ -11,14 +11,14 @@ import start_UI_dev as start_UI_dev
 import functions.icon_BG_function as BG_function
 
 
+resources_dir = utils.getPaths()
 
 # Icons
-# Main
-path_to_icon = "D:\\work\\projects\\dev\\projects\\PIPEDREAMS\\pipedreams\\pipeline\\resources\\windows_tray_icons\\tray_icon_mini_animations\\default_colors\\px_1.ico"
+path_to_icon = f"{resources_dir}\\windows_tray_icons\\tray_icon_mini_animations\\default_colors\\px_1.ico"
 
-Pipedreams_PRO_ICO = "D:\\work\\projects\\dev\\projects\\PIPEDREAMS\\pipedreams\\pipeline\\resources\\windows_tray_icons\\tray_icon_mini_animations\\black_colors\\px_1.ico"
-Pipedreams_DEV_ICO = "D:\\work\\projects\\dev\\projects\\PIPEDREAMS\\pipedreams\\pipeline\\resources\\windows_tray_icons\\tray_icon_mini_animations\\black_colors\\px_2.ico"
-admin = "D:\\work\\projects\\dev\\projects\\PIPEDREAMS\\pipedreams\\pipeline\\resources\\windows_tray_icons\\tray_icon_mini_animations\\admin_boet\\px_1.ico"
+Pipedreams_PRO_ICO = f"{resources_dir}\\windows_tray_icons\\tray_icon_mini_animations\\black_colors\\px_1.ico"
+Pipedreams_DEV_ICO = f"{resources_dir}\\windows_tray_icons\\tray_icon_mini_animations\\black_colors\\px_2.ico"
+admin = f"{resources_dir}\\windows_tray_icons\\tray_icon_mini_animations\\admin_boet\\px_1.ico"
 
 hover_text = "PipeDreams"
 
