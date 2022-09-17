@@ -13,8 +13,7 @@ import json
 main_path = os.path.dirname(os.path.dirname((__file__)))
 sys.path.append(main_path) # /PIPEDREAMS/PipeDreams
 
-import admin.Tools.utils.Utils as utils
-
+import utils as utils
 
 import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(message)s')
@@ -120,7 +119,7 @@ def run():
 
 
     # check if part of admin team
-    privilages = check_admin(userName)[0]
+    privilages = utils.check_admin()[0]
 
     # check Title
     title = check_title(userName)
