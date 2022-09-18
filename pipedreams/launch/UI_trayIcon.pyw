@@ -10,6 +10,7 @@ import launch.start_UI_production as start_UI_production
 import launch.start_UI_dev as start_UI_dev
 
 import utils as utils
+import UI_settings as UI_settings
 import admin.Tools.admin as admin
 
 import functions.icon_BG_function as BG_function
@@ -50,7 +51,7 @@ def main():
     sg.theme(THEME)
 
     icons_dict = utils.returnIconPath(utils.getPaths(), config, type="side")
-    menu_def = ['UNUSED', ['PipeDreams', 'Utils',['Create Project'],'---', 'Tools', ['Clear Cache'], 'Dev',['PipeDreams_Dev', 'Admin'] ,'---', 'Settings', 'About', 'Exit']]
+    menu_def = ['UNUSED', ['PipeDreams','---', 'Tools', ['Clear Cache'], 'Dev',['PipeDreams_Dev', 'Admin'] ,'---', 'Settings', 'About', 'Exit']]
      
     tray = sg.SystemTray(menu=menu_def, filename=icons_dict["icon_path_1"])
     window= ''
@@ -89,7 +90,9 @@ def main():
                 pass
 
         if event == "Settings":
-            print("Settings wip")
+            UI_settings.Run_user_preferences("")
+
+
 
         if event == "About":
             os.system("start \"\" "+ (WEBSITE))
