@@ -6,6 +6,7 @@ import loggers
 from infi.systray import SysTrayIcon
 
 import utils as utils
+import UI_settings as UI_settings
 import start_UI_production as start_UI_production
 import start_UI_dev as start_UI_dev
 import functions.icon_BG_function as BG_function
@@ -46,13 +47,15 @@ def run_admin(sysTrayIcon):
     pass
 
 
-
-
+def Settings(sysTrayIcon):
+    UI_settings.Run_user_preferences("")
+    SysTrayIcon.shutdown
 
 def menu():
     """ Builds the trayIcons Menus """
     menu_options = (('PipeDreams', Pipedreams_PRO_ICO, Pipedreams_UI_PRODUCTION),
                     ('Dev', Pipedreams_DEV_ICO, (('PipeDreams Dev', admin, Pipedreams_UI_DEV),('Admin', admin, run_admin),)),
+                    ('Settings', admin, Settings),
                     ('About', admin, about),
                 )
 
