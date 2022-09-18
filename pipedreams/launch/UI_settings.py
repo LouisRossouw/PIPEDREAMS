@@ -115,7 +115,7 @@ def Run_user_preferences(icon_1):
                 [sg.Push(), sg.Button('Save', key="-SAVE-")] ]
 
     # Build UI
-    window = sg.Window('Video Converter', 
+    window = sg.Window('User Preferences', 
                         layout,
                         no_titlebar=False, 
                         resizable=False, 
