@@ -7,8 +7,8 @@
 import os
 import time
 import sys
+import yaml
 import shutil
-import pipedreams.launch.utils as utils
 
 import ctypes  # An included library with Python install.   
 
@@ -144,6 +144,8 @@ def check_Python(Python_dir):
         logger.info("Python exists.")
 
 
+
+
 def check_Python_packages(PIPEDREAMS_DIR, pipeline_config):
     """ checks and makes sure system python has all the packages needed to run Pipedreams. """
 
@@ -160,10 +162,47 @@ def check_Python_packages(PIPEDREAMS_DIR, pipeline_config):
 
 
 
-def launch_pipedreams(launch_dir):
+
+def get_UI_toolBar_config(PIPEDREAMS_DIR):
+    """ returns either pipeline forced defaults or user preferences. """
+
+    pipeline_config = yaml_config(f"{PIPEDREAMS_DIR}/pipedreams/admin/pipeline_config.yaml")
+    allow_user_preferences = pipeline_config["allow_user_preferences"]
+
+
+    if allow_user_preferences == False:
+        UI_toolBar_config = f"{PIPEDREAMS_DIR}/pipedreams/admin/UI_toolBar.yaml"
+    elif allow_user_preferences == True:
+        UI_toolBar_config = get_user_preferences(PIPEDREAMS_DIR)
+
+    config = yaml_config(UI_toolBar_config)
+
+    return(config)
+
+
+
+
+def get_user_preferences(PIPEDREAMS_DIR):
+    """ returns user preferences, creates it if it does not exist. """
+
+    userName = os.environ['COMPUTERNAME']
+    user_prefs = f"{PIPEDREAMS_DIR}/pipedreams/admin/data/user_preferences/{userName}_preferences.yaml"
+
+    if os.path.exists(user_prefs) != True:
+
+        UI_toolBar_config = yaml_config(f"{PIPEDREAMS_DIR}/pipedreams/admin/UI_toolBar.yaml")
+        with open(user_prefs, 'w') as file:
+            yaml.dump(UI_toolBar_config, file)
+
+    return(user_prefs)
+
+
+
+
+def launch_pipedreams(launch_dir, PIPEDREAMS_DIR):
     """ launches pipedreams tools. """
 
-    MINIMIZED_TRAYICON = utils.get_UI_toolBar_config()["MINIMIZED_TRAYICON"]
+    MINIMIZED_TRAYICON = get_UI_toolBar_config(PIPEDREAMS_DIR)["MINIMIZED_TRAYICON"]
     
     # Launches the icon either minimized or on the side of the monitor.
     try:
@@ -175,6 +214,14 @@ def launch_pipedreams(launch_dir):
             os.startfile(f"{launch_dir}/UI_trayIcon_mini.pyw")
     except Exception as e:
         logger.info(str(e))
+
+
+
+
+def yaml_config(config_path):
+    """ Open yaml configs. """
+    config = yaml.safe_load(open(config_path))
+    return(config)
 
 
 
@@ -191,7 +238,7 @@ def startup():
     ffmpeg_dir = f"{PIPEDREAMS_DIR}/pipedreams/pipeline/tools/ffmpeg"
 
     usr_data_dir = f"{PIPEDREAMS_DIR}/pipedreams/admin/data/user_data_base"
-    pipeline_config = utils.yaml_config(f"{PIPEDREAMS_DIR}/pipedreams/admin/pipeline_config.yaml")
+    pipeline_config = yaml_config(f"{PIPEDREAMS_DIR}/pipedreams/admin/pipeline_config.yaml")
 
     
     appdata_path = os.path.dirname(os.getenv('APPDATA'))
@@ -217,7 +264,7 @@ def startup():
             )
 
 
-    launch_pipedreams(launch_dir)
+    launch_pipedreams(launch_dir, PIPEDREAMS_DIR)
 
 
 
