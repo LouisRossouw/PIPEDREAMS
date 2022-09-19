@@ -227,7 +227,7 @@ def capture_run(
 
     focal_length = cmds.getAttr(camera_shape + ".focalLength")
 
-
+    Scene_FPS = get_FPS()
     # resets disables panzoom before capture.
     cmds.setAttr(camera_shape + ".panZoomEnabled", 0)
 
@@ -315,7 +315,8 @@ def capture_run(
 
     ffmpeg_convert.png_to_vid(
                               COMP_file_saveName_path,
-                              video_output_path
+                              video_output_path,
+                              Scene_FPS
                               )
 
 
