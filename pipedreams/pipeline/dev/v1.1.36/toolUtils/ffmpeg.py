@@ -14,7 +14,8 @@ def vid_to_png(path_to_video_input,
 
 
 def png_to_vid(path_to_png_sequence_input,
-               path_to_video_output
+               path_to_video_output,
+               FPS
                ):
     """ This converts a png sequence to video / mp4, mov etc """
 
@@ -22,7 +23,7 @@ def png_to_vid(path_to_png_sequence_input,
     path_out = path_to_video_output + '.mp4'
 
     # uses ffmpeg to convert png seq to mp4
-    os.system('ffmpeg -i ' + str(path) + ' -vcodec libx264 -crf 1  -pix_fmt yuv420p ' + str(path_out))
+    os.system('ffmpeg -i ' + str(path) + ' -vcodec libx264 -crf 1 -r ' + str(FPS) + ' -pix_fmt yuv420p ' + str(path_out))
 
 
 def composite_img(png_name, png_save_name, bg_color):
