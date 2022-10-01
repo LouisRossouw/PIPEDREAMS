@@ -35,13 +35,13 @@
 
 - Capture Manager.
 <p align="center">
-<img src="https://user-images.githubusercontent.com/80905013/193425987-bd7f166e-942d-44f7-be23-cd48d6bbce04.png" align="center" width="60%">
+<img src="https://user-images.githubusercontent.com/80905013/193425987-bd7f166e-942d-44f7-be23-cd48d6bbce04.png" align="center" width="30%">
 </p>
 
 - Capture Manager goes through a compositing process to format a version of a capture for dailies, it collect scene data and displays it in this capture too along with
   company logo, ideally this capture would be used by Ftrack etc, unfortunatly i dont have access to Ftrack to be able to implement it.
 <p align="center">
-<img src="https://user-images.githubusercontent.com/80905013/193426188-cf7f21fd-d2cb-4a62-850c-f8366a01eba3.gif" align="center" width="60%">
+<img src="https://user-images.githubusercontent.com/80905013/193426188-cf7f21fd-d2cb-4a62-850c-f8366a01eba3.gif" align="center" width="100%">
 </p>
 
 
