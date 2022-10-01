@@ -23,6 +23,11 @@
 <img src="https://user-images.githubusercontent.com/80905013/193425662-2d312af8-2142-4f1c-a282-e8f70ff68dc4.gif" align="center" width="60%">
 </p>
 
+- Maya drop down menu to PB tools.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/80905013/193426682-070255d3-cdab-4733-bc82-0139f16ca850.png" align="center" width="50%">
+</p>
+
 - Maya Scene Manager, to import assets for specific project / show.
 <p align="center">
 <img src="https://user-images.githubusercontent.com/80905013/193425740-a93b7e42-1467-4a72-98df-f40bcb2f3599.gif" align="center" width="80%">
