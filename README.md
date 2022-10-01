@@ -4,7 +4,7 @@
 <img src="https://user-images.githubusercontent.com/80905013/193423638-1d37a040-c230-48b5-a7dc-78e5a56ed3e2.gif" width="25%">
 </p>
 
-- This is an ongoing personal project for my team and myself, i work on this after hours in my freetime, so it has been a slow but fun process so far trying to figure out
+- This is an ongoing personal project for myself, for my team, i work on this after hours in my freetime, so it has been a slow but fun process so far trying to figure out
   how to build a Pipeline!
 
 - Currently, PipeDreams is a basic Pipeline (mostly a DCC launcher for now) 
