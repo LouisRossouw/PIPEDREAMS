@@ -1,6 +1,6 @@
 # PipeDreams
 
-- This is an ongoing personal project for my team and myself, i work on this after hours in freetime, so it has been a slow but fun process so far trying to figure out
+- This is an ongoing personal project for my team and myself, i work on this after hours in my freetime, so it has been a slow but fun process so far trying to figure out
   how to build a Pipeline!
 
 currently, PipeDreams is a basic Pipeline (mostly currently just a DCC launcher for now) 
