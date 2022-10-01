@@ -25,8 +25,14 @@
 
 - Maya Scene Managr, to import assets for specific project / show.
 <p align="center">
-<img src="https://user-images.githubusercontent.com/80905013/193425740-a93b7e42-1467-4a72-98df-f40bcb2f3599.gif" align="center" width="50%">
+<img src="https://user-images.githubusercontent.com/80905013/193425740-a93b7e42-1467-4a72-98df-f40bcb2f3599.gif" align="center" width="80%">
 </p>
+
+- Export Manager for specific shots and user scene, with the ability to delete from the check list and change an assets settings before exporting.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/80905013/193425846-dcd8e877-34ac-49a1-a287-d29e353c79a5.png" align="center" width="80%">
+</p>
+
 
 
 
