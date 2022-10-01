@@ -49,6 +49,9 @@
 <img src="https://user-images.githubusercontent.com/80905013/193426188-cf7f21fd-d2cb-4a62-850c-f8366a01eba3.gif" align="center" width="100%">
 </p>
 
+Theres are 2 versions of the pipeline for the DCC apps within this system, a development version and a production version, with its own very basic version control,
+This would allow Pipeline TDS to continue building DCC tools in dev mode and later pushing it to productions (which is the version the artists use, this helps avoid, breaking the tools and affecting their workflow. i dont really know what is the best way to go about this, but this is the way i decided to build it.)
+
 All these tools are in a very rough state, and needs loads of love and work! =)
 
 
