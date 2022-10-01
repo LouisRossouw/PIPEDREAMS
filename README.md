@@ -23,7 +23,7 @@
 <img src="https://user-images.githubusercontent.com/80905013/193425662-2d312af8-2142-4f1c-a282-e8f70ff68dc4.gif" align="center" width="60%">
 </p>
 
-- Maya drop down menu to PDS tools.
+- Maya drop down menu to PDS tools. alternatively top drop down menu title can be renamed to company name. in the config settings.
 <p align="center">
 <img src="https://user-images.githubusercontent.com/80905013/193426682-070255d3-cdab-4733-bc82-0139f16ca850.png" align="center" width="50%">
 </p>
