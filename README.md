@@ -14,5 +14,5 @@ with versioning control.
 
 
 - user can choose and save custom icons and minimize the tool, alternatively this feature can be overridden by dmin and force a companies logo.
-![customIcon]<img src="https://user-images.githubusercontent.com/80905013/193425250-52573a42-4f55-4e63-855e-97dcd30b9956.gif" width="50%">
+<img src="https://user-images.githubusercontent.com/80905013/193425250-52573a42-4f55-4e63-855e-97dcd30b9956.gif" width="60%">
 
