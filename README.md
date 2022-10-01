@@ -23,14 +23,25 @@
 <img src="https://user-images.githubusercontent.com/80905013/193425662-2d312af8-2142-4f1c-a282-e8f70ff68dc4.gif" align="center" width="60%">
 </p>
 
-- Maya Scene Managr, to import assets for specific project / show.
+- Maya Scene Manager, to import assets for specific project / show.
 <p align="center">
 <img src="https://user-images.githubusercontent.com/80905013/193425740-a93b7e42-1467-4a72-98df-f40bcb2f3599.gif" align="center" width="80%">
 </p>
 
-- Export Manager for specific shots and user scene, with the ability to delete from the check list and change an assets settings before exporting.
+- Maya Export Manager for specific shots and user scene, with the ability to delete from the check list and change an assets settings before exporting.
 <p align="center">
 <img src="https://user-images.githubusercontent.com/80905013/193425846-dcd8e877-34ac-49a1-a287-d29e353c79a5.png" align="center" width="80%">
+</p>
+
+- Capture Manager.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/80905013/193425987-bd7f166e-942d-44f7-be23-cd48d6bbce04.png" align="center" width="60%">
+</p>
+
+- Capture Manager goes through a compositing process to format a version of a capture for dailies, it collect scene data and displays it in this capture too along with
+  company logo, ideally this capture would be used by Ftrack etc, unfortunatly i dont have access to Ftrack to be able to implement it.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/80905013/193426188-cf7f21fd-d2cb-4a62-850c-f8366a01eba3.gif" align="center" width="60%">
 </p>
 
 
