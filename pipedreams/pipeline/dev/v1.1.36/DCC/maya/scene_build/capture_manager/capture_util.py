@@ -11,6 +11,7 @@ import toolUtils.pillow as pillow
 
 
 
+
 def get_resolution():
     """ returns the resolution and aspect ratio of the maya scene file. """
 
@@ -57,11 +58,29 @@ def get_FPS():
 
 
 
+
+def cleanup_png_sequence(path_to_pngs):
+    """ runs a cleanup process of deleting the png sequences if condition = True. 
+        this is to help save space as png sequences cost a fair amount of mb. 
+    """
+    png_seq_raw = os.listdir(path_to_pngs + "/raw")
+    png_seq_comp = os.listdir(path_to_pngs + "/comp")
+
+    for png in png_seq_raw:
+        os.remove(path_to_pngs + "/raw/" + png)
+
+    for png in png_seq_comp:
+        os.remove(path_to_pngs + "/comp/" + png)
+
+
+
+
 def write_to_json(json_path, data):
     """ Create and write to json file. """
 
     with open(json_path, 'w') as f:
         json.dump(data, f, indent=6)
+
 
 
 
@@ -213,6 +232,7 @@ def capture_run(
                 UI_guides_eval,
                 UI_GS_eval,
                 UI_comment_eval,
+                config_data
                 ):
 
     # Get camera
@@ -247,7 +267,8 @@ def capture_run(
 
     # Png sequence
     file_name = capture_name_eval + "_" + task_name_eval + "_" + UI_version_eval
-    PNG_file_saveName_path = export_path_eval + "/" + task_name_eval + "/" + capture_name_eval + "/" + UI_version_eval + "/png_seq/raw/" + file_name
+    PNG_Dir = export_path_eval + "/" + task_name_eval + "/" + capture_name_eval + "/" + UI_version_eval + "/png_seq"
+    PNG_file_saveName_path = PNG_Dir + "/raw/" + file_name
 
 
     # playblast
@@ -318,7 +339,19 @@ def capture_run(
                               video_output_path,
                               Scene_FPS
                               )
+             
 
+    try:    
+        # runs a cleanup process of deleting the png sequences if condition = True. this is to help save space as png sequences cost a fair amount of mb.      )
+        if config_data["clean_captures_pngs"] == True:
+            cleanup_png_sequence(PNG_Dir)
+            print("Cleaning up pngs")
+        else:
+            pass
+        
+    except KeyError:
+        print("Cleaning up - no conditions in config")
+        pass
 
 
 
@@ -353,4 +386,10 @@ if __name__ == "__main__":
     #             )
 
 
-    get_resolution()
+    # get_resolution()
+
+
+ 
+    path_to_pngs = "D:\\work\\projects\\3D\\projects\\boxx\\dev\\shots\\bxx_010\\captures\\anim\\bxx_010\\v020\\png_seq"
+    cleanup_png_sequence(path_to_pngs)
+
