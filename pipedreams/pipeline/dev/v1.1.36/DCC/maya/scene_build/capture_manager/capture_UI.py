@@ -160,6 +160,7 @@ def capture_UI():
                                   UI_guides_eval,
                                   UI_GS_eval,
                                   UI_comment_eval,
+                                  config_data
                                   )
 
 
