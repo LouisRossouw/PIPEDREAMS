@@ -14,11 +14,11 @@ import scene_build.export_manager.export_utils as utils
 
 
 def Export_Manager():
+    """ Start the Export Manager UI. """
 
 
     def write_to_json(json_path, data):
         """ Create and write to json file """
-
         with open(json_path, 'w') as f:
             json.dump(data, f, indent=6)
 
@@ -60,11 +60,6 @@ def Export_Manager():
 
         if bool(selected_geo) != None:
             if bool(asset_name) != None:
-
-                # add tags to selected objects
-                # addTag(asset_name, selected_geo)
-
-
 
                 data[asset_name] = {
                                     "asset_name":asset_name,
@@ -110,6 +105,7 @@ def Export_Manager():
 
 
 
+
     def populateExportList(*args):
         """ gets all existing saved export data for this specific scene and adds it to the UI export list """
 
@@ -131,7 +127,6 @@ def Export_Manager():
             asset_category = data[asset]["asset_category"]
             asset_type = data[asset]["asset_type"]
 
-
             asset_destination = data[asset]["asset_destination"]
             export_path = data[asset]["export_path"]
 
@@ -148,17 +143,10 @@ def Export_Manager():
 
             unique_user = user + "_" + str(count)
 
-
-
             path = os.getenv(asset_destination.upper().replace(" ", "_"))
             path_category = (path + "/" + asset_category)
             path_type = (path_category + "/" + asset_name)
             asset_name_path = (path_type + "/" + asset_type)
-
-
-
-
-
 
 
     # data
@@ -192,13 +180,11 @@ def Export_Manager():
             end_intField = cmds.intField(value=end_frame, parent=UI_saved_asset_list, bgc=(0.3,0.3,0.3))                # end
             cmds.separator(style='in', hr=False, parent=UI_saved_asset_list)
 
-
             version_optionMenu = cmds.optionMenu(label="", parent=UI_saved_asset_list)                                  # Version
             versions = versioning(asset_name_path)[1]
             for v in versions:
                 cmds.menuItem(label=v)
             cmds.separator(style='in', hr=False, parent=UI_saved_asset_list)
-
 
             cmds.text(unique_user, parent=UI_saved_asset_list, font="tinyBoldLabelFont")                                # user
             cmds.separator(style='in', hr=False, parent=UI_saved_asset_list)
@@ -211,6 +197,9 @@ def Export_Manager():
 
             delete_row = cmds.button(label="Delete",parent=UI_saved_asset_list)
             cmds.button(delete_row, e=True, c=partial(deleteRow, delete_row))
+
+            save_row = cmds.button(label="Save",parent=UI_saved_asset_list)
+            cmds.button(save_row, e=True, c=partial(saveRow, save_row))
 
             UIdata[count] = {
                             "Query_box": asset_checkbox,
@@ -225,10 +214,51 @@ def Export_Manager():
 
                             "user": user,
                             "time": time,
-                            "delete_row":delete_row
+                            "delete_row":delete_row,
+                            "save_row": save_row
                         }
 
         return(UIdata)
+
+
+
+
+    def saveRow(*args):
+        """ saves the specific asset in the checklist after the user has changed its settings. """
+
+        button_path = args[0]
+        scene_data = getSceneData()[1]
+        data = read_json(scene_data)
+
+        for row in UIdata:
+            button_path_data = UIdata[row]["save_row"]
+            if button_path == button_path_data:
+
+                row_asset_name = UIdata[row]["asset_name"]
+
+                if row_asset_name in data:
+
+                    # Get data for specific asset.
+                    query_checkbox = cmds.checkBox(UIdata[row]["Query_box"], query=True, value=True)
+                    asset_name = UIdata[row]["asset_name"]
+                    query_type = cmds.optionMenu(UIdata[row]["asset_type"], query=True, value=True)
+                    query_category = cmds.optionMenu(UIdata[row]["asset_category"], query=True, value=True)
+                    query_destination = cmds.optionMenu(UIdata[row]["asset_destination"], query=True, value=True)
+                    query_start = cmds.intField(UIdata[row]["start_frame"], query=True, value=True)
+                    query_end = cmds.intField(UIdata[row]["end_frame"], query=True, value=True)
+
+                    # Update the assets data based on users input.
+                    data[asset_name]["asset_category"] = query_category
+                    data[asset_name]["asset_type"] = query_type
+                    data[asset_name]["asset_destination"] = query_destination
+                    data[asset_name]["start_frame"] = query_start
+                    data[asset_name]["end_frame"] = query_end
+                    data[asset_name]["time"] = time.time()
+
+                    write_to_json(scene_data, data)
+
+                    # Reload UI
+                    cmds.evalDeferred(Export_Manager)
 
 
 
@@ -251,7 +281,9 @@ def Export_Manager():
 
                     write_to_json(scene_data, data)
 
+                    # Reload UI
                     cmds.evalDeferred(Export_Manager)
+
 
 
 
@@ -266,6 +298,7 @@ def Export_Manager():
 
 
 
+
     def clearOptionMenu(optionMneu_path):
         """ pass the optionmenu and it will clear all the items """
 
@@ -275,7 +308,9 @@ def Export_Manager():
 
 
 
+
     def rowTypeChange(*args):
+        """ Updates a rows version when a user changes input like the category for example. """
 
         data = read_json(getSceneData()[1])
 
@@ -307,13 +342,12 @@ def Export_Manager():
 
 
 
+
     def exportSelected(*args):
         """ loops through all the checkboxes in the export list, and exports the checked checkboxes """
 
-
         utils.check_if_saved()
         data = read_json(getSceneData()[1])
-
 
         for row in UIdata:
 
@@ -336,7 +370,6 @@ def Export_Manager():
 
             if query_checkbox == True:
 
-
                 if os.path.exists(path_category) != True:
                     os.mkdir(path_category)
                 if os.path.exists(path_type) != True:
@@ -348,7 +381,6 @@ def Export_Manager():
 
                 if os.path.exists(full_save_path) != True:
                     os.mkdir(full_save_path)
-
 
 
                 cmds.select(data[asset_name]["selected"])
@@ -415,11 +447,8 @@ def Export_Manager():
                                                     }
                             write_to_json(JSON_EXPORTS, test_data)
 
-
-
-
-
         reloadUI()
+
 
 
 
@@ -431,7 +460,6 @@ def Export_Manager():
                     ):
         """ filters and exports selected assets """
 
-
         if query_format_check == "mb":
             export_mayaBinary(save_file)
         elif query_format_check == "abc":
@@ -440,6 +468,7 @@ def Export_Manager():
             print("")
         elif query_format_check == "obj":
             export_OBJ(save_file)
+
 
 
 
@@ -476,8 +505,8 @@ def Export_Manager():
 
 
 
-
     def exportAlembic(save_file, query_start, query_end, query_category):
+        """ Exports the alembic. """
 
         selection_list = cmds.ls(selection=True)
 
@@ -500,23 +529,24 @@ def Export_Manager():
 
 
 
+
     def export_mayaBinary(save_file):
         """ This function exports selected as a maya scene file """
-
         cmds.file(save_file, force=True, options='v=0', type='mayaBinary', preserveReferences=True, exportSelected=True)
+
+
 
 
     def export_OBJ(save_file):
         """ This function exports selected as a maya scene file """
-
         cmds.file(save_file, force=True, options='v=0', type='OBJexport', preserveReferences=True, exportSelected=True)
-
 
 
 
 
     def versioning(path_to_dir):
         """ This function returns the current version and the next version number """
+
         try:
             list_contents = os.listdir(path_to_dir)
 
@@ -546,13 +576,7 @@ def Export_Manager():
             new_version = ["v001"]
             version_list = ["v001"]
 
-
         return (new_version, version_list)
-
-
-
-
-
 
 
 
@@ -581,6 +605,8 @@ def Export_Manager():
             cmds.textField(txtFielf_EXPORT_PATH, edit=True, text=os.getenv("SHOT_ASSETS"))
 
 
+
+
     def UIDestination(*args):
         """  Updates export path when asset destination changes """
         asset_destination = cmds.optionMenu(opMenu_ASSET_DESTINATION, query=True, value=True)
@@ -588,6 +614,8 @@ def Export_Manager():
             cmds.textField(txtFielf_EXPORT_PATH, edit=True, text=os.getenv("TOP_ASSETS"))
         if asset_destination == "Shot Assets":
             cmds.textField(txtFielf_EXPORT_PATH, edit=True, text=os.getenv("SHOT_ASSETS"))
+
+
 
 
     def dataCheck():
@@ -619,20 +647,20 @@ def Export_Manager():
 
 
     def reloadUI(*args):
-
+        """ Reloads UI. """
         cmds.evalDeferred(Export_Manager)
 
 
 
     def addText(*args):
 
-        print(args)
         selected_text = cmds.optionMenu(existingMenu, query=True, value=True)
         cmds.textField(txtField_ASSET_NAME, edit=True, text=selected_text)
 
 
 
     def populateExistingMenus():
+        """ Populates the existing assets menu. """
 
         all_existing_assets = []
 
@@ -655,7 +683,6 @@ def Export_Manager():
                 if asset not in all_existing_assets:
                     all_existing_assets.append(asset)
 
-
         clean_items_list = []
         for item in all_existing_assets:
             if item not in clean_items_list:
@@ -671,12 +698,10 @@ def Export_Manager():
 ## UI
     dataCheck()
 
-
-
     if cmds.window('Export_Manager_dev', exists=True):
         cmds.deleteUI('Export_Manager_dev')
 
-    window = cmds.window("Export_Manager_dev", widthHeight=(1400, 500))
+    window = cmds.window("Export_Manager_dev", widthHeight=(1500, 500))
 
     cmds.columnLayout(adjustableColumn=True)
     cmds.button(label="Refresh", command=reloadUI)
@@ -738,15 +763,6 @@ def Export_Manager():
 
 
     cmds.button(label="Save to Exporter", bgc=(0.65, 1, 0), command=SaveExport)
-    # cmds.button(label="Export Now", bgc=(0.65, 1, 0), command=ExportNow)
-
-    # cmds.text(label=" : ")
-    #
-    # cmds.checkBox(label="mb")
-    # cmds.checkBox(label="abc")
-    # cmds.checkBox(label="fbx")
-    # cmds.checkBox(label="obj")
-
 
 
     cmds.setParent("..")
@@ -786,7 +802,7 @@ def Export_Manager():
 
 
 # populate saved asset data here
-    UI_saved_asset_list = cmds.gridLayout( numberOfColumns=23, cellWidthHeight=(60, 15) )
+    UI_saved_asset_list = cmds.gridLayout( numberOfColumns=24, cellWidthHeight=(60, 15) )
     UIdata = populateExportList()
     cmds.setParent( '..' )
     cmds.separator(height=1, style='in')
@@ -804,7 +820,6 @@ def Export_Manager():
     export_list_checkBox = [MB_checkBox_list, ABC_checkBox_list, FBX_checkBox_list, OBJ_checkBox_list]
 
     UICheck()
-
 
 
 
