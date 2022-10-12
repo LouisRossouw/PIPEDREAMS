@@ -27,7 +27,7 @@ class Save_as(object):
 
         cmds.rowColumnLayout(numberOfRows=1)
 
-        cmds.optionMenu()
+        self.optionMenu_task = cmds.optionMenu(changeCommand=self.updateTask)
         self.populate_optionMenu(self)
 
         cmds.setParent('..')
@@ -53,28 +53,34 @@ class Save_as(object):
 
 
 
+    def updateTask(self, *args):
+        """ update task on optionMenu change. """
+
+        split_text = self.query_split_field(self)
+        task_name = cmds.optionMenu(self.optionMenu_task, query=True, value=True)
+
+        self.update_save_field(split_text[2], task_name)
+
+
+
+
     def populate_optionMenu(self, *args):
         """ Simply populates the optionMenu. """
+
         items = ["anim", "previs", "rigging", "modelling", "lighting", "rendering"]
-        for i in items:
-            cmds.menuItem(i)
+        for item in items:
+            cmds.menuItem(item)
 
 
 
 
     def get_name_for_untitled(self, *args):
         """ generates a scene file name for an unsaved scene. project/shot default name. """
+
         name = os.environ["SHOT"]
-        format_name = name + "_anim_" + "v01_001"
+        format_name = name + "_task_" + "v01_001"
+
         return format_name
-
-
-
-
-    def get_name_for_existing(self, *args):
-        """ If scene is already saved, return its name. """
-        file_name = os.path.basename(self.scene_name).split('.')[0]
-        return file_name
 
 
 
@@ -89,7 +95,7 @@ class Save_as(object):
             file_name = self.get_name_for_untitled(self)
 
         elif bool(self.scene_name) == True:
-            file_name = self.get_name_for_existing(self)
+            file_name = os.path.basename(self.scene_name).split('.')[0]
 
         return file_name
 
@@ -98,87 +104,75 @@ class Save_as(object):
 
     def startup_update_save_field(self, *args):
         """ adds the existing scene file name to the UI text field. """
+
         cmds.textField(self.save_name_field, edit=True, text=self.get_scene_name(self))
 
 
 
 
-    def query_save_field(self, *args):
-        """ evaluates the save field. """
-        save_field = cmds.textField(self.save_name_field, query=True, text=True)
-        return save_field
-
-
-
     def query_split_field(self, *args):
         """ splits the text up into pieces to make it changeable. """
-        text = self.query_save_field(self)
+
+        text = cmds.textField(self.save_name_field, query=True, text=True)
         split_text = text.split('_')
         split_text.reverse()
+
         return split_text
 
 
 
+
+    def update_save_field(self, replace_text, with_new_text):
+        """ Replaces the old text with the new text in the save fieild. """
+
+        replace_text = str(cmds.textField(self.save_name_field, query=True, text=True)).replace(replace_text, with_new_text)
+        cmds.textField(self.save_name_field, edit=True, text=replace_text)
+
+
+
+
     def button_incremental_down(self, *args):
-        """ version up. """
+        """ version down. """
+
         split_text = self.query_split_field(self, *args)
-        version_number = split_text[1]
-        incremental_number = split_text[0]
-        new_incremental_number = str((int(incremental_number) - 1)).zfill(3)
+        new_incremental_number = str((int(split_text[0]) - 1)).zfill(3)
 
-        self.updated_text = version_number + "_" + new_incremental_number
-
-        self.rebuild_save(self)
+        self.update_save_field(split_text[0], new_incremental_number)
 
 
 
 
     def button_incremental_up(self, *args):
         """ version up. """
+
         split_text = self.query_split_field(self, *args)
-        version_number = split_text[1]
-        incremental_number = split_text[0]
-        new_incremental_number = str((int(incremental_number) + 1)).zfill(3)
+        new_incremental_number = str((int(split_text[0]) + 1)).zfill(3)
 
-        self.updated_text = version_number + "_" + new_incremental_number
-
-        self.rebuild_save(self)
+        self.update_save_field(split_text[0], new_incremental_number)
 
 
 
 
     def button_version_up(self, *args):
         """ version up. """
-        split_text = self.query_split_field(self, *args)
-        version_number = split_text[1][1:] # Remove the V from the number
-        new_version_number = str((int(version_number) + 1)).zfill(2)
-        self.updated_text = "v" + new_version_number + "_" + split_text[0]
 
-        self.rebuild_save(self)
+        split_text = self.query_split_field(self)
+        new_version_number = "v" + str((int(split_text[1][1:]) + 1)).zfill(2) # + Update number
+
+        self.update_save_field(split_text[1], new_version_number)
 
 
 
 
     def button_version_down(self, *args):
-        """ version up. """
-        split_text = self.query_split_field(self, *args)
-        version_number = split_text[1][1:] # Remove the V from the number
-        new_version_number = str((int(version_number) - 1)).zfill(2)
-        self.updated_text = "v" + new_version_number + "_" + split_text[0]
+        """ version down. """
 
-        self.rebuild_save(self)
+        split_text = self.query_split_field(self)
+        new_version_number = "v" + str((int(split_text[1][1:]) - 1)).zfill(2) # - Update number
 
+        self.update_save_field(split_text[1], new_version_number)
 
 
-
-    def rebuild_save(self, split_text):
-        """ Rebuilds the new save name """
-
-        text = cmds.textField(self.save_name_field, query=True, text=True)
-        updated_text = self.updated_text
-        updated_save_name = text[:-len(updated_text)] + updated_text
-
-        cmds.textField(self.save_name_field, edit=True, text=updated_save_name)
 
 
 
