@@ -1,9 +1,6 @@
 import os
-
 import maya.cmds as cmds
-from pymel import mayautils
 
-import scene_build.RockettotheskiesUI as UI
 import scene_build.startup as startup
 
 
@@ -23,15 +20,8 @@ except RuntimeError:
     pass
 
 
-
-
-
-# setsup Maya the way i want it
+# Start the custom Maya tools.
 cmds.evalDeferred(startup.startup_build)
-
-# starts menu
-cmds.evalDeferred(UI.rocketothesky)
-
 
 
 
