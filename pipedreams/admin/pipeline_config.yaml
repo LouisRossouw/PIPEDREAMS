@@ -12,9 +12,9 @@ production_build : ""
 Pipeline_name: 'PIPEDREAMS'
 Pipeline_Path: "D:\\work\\projects\\3D\\projects"
 
-user_name: "louis"
+# user_name: "louis"
 
-maya_version: 2022
+
 houdini_version: 19.0.383
 
 # UI Start
@@ -23,3 +23,9 @@ only_PipeDreams_Projects: True # Only list projects created with PipeDreams.
 logger_disabled: False # Enable or Disable the loggers. False = the logger is Active.
 
 allow_user_preferences: True
+
+
+
+# Maya
+maya_UI_type: "toolBar" # toolBar or simple
+maya_version: 2022
