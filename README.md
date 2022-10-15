@@ -7,7 +7,7 @@
   how to build a animation VFX Pipeline!
 
 - Currently, PipeDreams is a basic Pipeline (mostly a DCC launcher for now) 
-  that allows a large team of 3D artists to work seemlessly together on the same projects,
+  that allows a small team of 3D artists to work seemlessly together on the same projects,
   it modifies the 3D package to a specific project environment, provides core tools for the DCC, such as a Scene Manager, Export Manager and a Capture Manager,
   these set of tools allows for the automotation of repetitive importing and exporting of assets, while keeping the file structure and naming conventions neat
   with versioning control.
