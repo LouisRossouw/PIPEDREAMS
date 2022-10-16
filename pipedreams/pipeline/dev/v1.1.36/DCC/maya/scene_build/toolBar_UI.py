@@ -33,7 +33,7 @@ class ToolBar():
         self.window_title = "Quick Save"
         self.size = (500, 25)
         self.bg_MENUBAR = (0.14, 0.14, 0.14)
-        self.TB_LOGO = 'D:/work/projects/dev/projects/PIPEDREAMS/pipedreams/pipeline/resources/logo/pixl.ico'
+        self.TB_LOGO = self.return_logo_path()
 
         core_tools_items = [menu_label, "---" * 6, "Scene Manager", "Export Manager", "Capture Manager", "---" * 6, "Studio Library"]
         community_tools_items = ["Community Tools", "---" * 6, "Camera Rig", "RandomHide", "QuickAnimSkin", "ChopChop"]
@@ -64,6 +64,10 @@ class ToolBar():
         # add quicksave to the toolbar
         SV.SaveSave()
 
+        cmds.separator(hr=False, width=100)
+        cmds.text(os.getenv('PROJECT_NAME'))
+        cmds.separator(hr=False, width=100)
+
         self.allowedAreas = ['top', 'bottom', 'left', 'right']
         self.bar = cmds.toolBar(area='top',
                                 content=self.window,
@@ -71,6 +75,16 @@ class ToolBar():
                                 bgc=self.bg_MENUBAR, numberOfPopupMenus=1, annotation="hello"
                                 )
 
+
+
+
+    def return_logo_path(self):
+        """ returns the logo to be used for the ToolBar. """
+
+        pipedreams = Path(os.getenv('PIPELINE_ROOT')).parents[2]
+        logo_dir = str(pipedreams) + "/pipeline/resources/logo/pxl_3.png"
+
+        return logo_dir
 
 
 
