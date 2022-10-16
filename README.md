@@ -6,7 +6,7 @@
 - This is an ongoing personal project for myself, for my team, i work on this after hours in my freetime, so it has been a slow but fun process so far trying to figure out
   how to build a animation VFX Pipeline!
 
-- * Looking at doing a major rebuild soon, after i have learnt some new things.
+- Looking at doing a major rebuild/restructure soon.
 
 - Currently, PipeDreams is a basic Pipeline (mostly a DCC launcher for now) 
   that allows a small team of 3D artists to work seemlessly together on the same projects,
