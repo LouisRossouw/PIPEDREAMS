@@ -8,5 +8,15 @@
             "pipeline_version": "v1.1.36",
             "pipeline_start_type": "C:\\work\\projects\\dev\\projects\\PIPEDREAMS\\PipeDreams\\pipeline\\production/v1.1.36/Main/cmd_line/cmd_line_start.py",
             "pipeline_version_path": "C:\\work\\projects\\dev\\projects\\PIPEDREAMS\\PipeDreams\\pipeline\\production/v1.1.36"
+      },
+      "LOURO": {
+            "lastSeen": 1663415295.6929717,
+            "privilages": "Tivoli",
+            "title": [
+                  "animation"
+            ],
+            "pipeline_version": "v1.1.36",
+            "pipeline_start_type": "d:\\work\\projects\\dev\\projects\\PIPEDREAMS\\PipeDreams\\pipeline\\production/v1.1.36/Main/cmd_line/cmd_line_start.py",
+            "pipeline_version_path": "d:\\work\\projects\\dev\\projects\\PIPEDREAMS\\PipeDreams\\pipeline\\production/v1.1.36"
       }
 }

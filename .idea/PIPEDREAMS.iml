@@ -5,7 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/../../../../../Program Files/Autodesk/Maya2022/devkit/other/Python27/pymel/extras/completion/py" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Maya Python 3.7 (pipeline)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
