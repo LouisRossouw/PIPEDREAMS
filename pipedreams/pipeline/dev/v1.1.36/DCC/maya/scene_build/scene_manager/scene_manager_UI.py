@@ -35,7 +35,6 @@ def Scene_Manager_UI():
         IMPORT_COLOR_VEH = (0, 0, 0)
 
 
-
         button_pushed = cmds.button(args[0], query=True, label=True)
 
         # check version number
@@ -64,6 +63,11 @@ def Scene_Manager_UI():
             # import / reference action
             print("Importing: ", full_asset_path)
             if button_pushed == "Import":
+
+                # popup for import
+                cmds.textManip(v=True)
+                cmds.headsUpMessage('Imported ' + asset_name + "_" + asset_type + "_" + current_version, time=2.0)
+                cmds.textManip(v=True)
 
                 # checks outliner for all existing items
                 before = set(cmds.ls(type="transform"))
