@@ -140,6 +140,8 @@ def set_MAYA_time(PIPEDATA):
         time_name = "pal"
     elif FPS == 24:
         time_name = "film"
+    else:
+        time_name = "ntsc"
 
     cmds.currentUnit(time=time_name)
 
