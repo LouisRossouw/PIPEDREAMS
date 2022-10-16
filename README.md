@@ -6,6 +6,8 @@
 - This is an ongoing personal project for myself, for my team, i work on this after hours in my freetime, so it has been a slow but fun process so far trying to figure out
   how to build a animation VFX Pipeline!
 
+- * Looking at doing a major rebuild soon, after i have learnt some new things.
+
 - Currently, PipeDreams is a basic Pipeline (mostly a DCC launcher for now) 
   that allows a small team of 3D artists to work seemlessly together on the same projects,
   it modifies the 3D package to a specific project environment, provides core tools for the DCC, such as a Scene Manager, Export Manager and a Capture Manager,
@@ -25,6 +27,11 @@
 - Maya drop down menu to PDS tools. alternatively top drop down menu title can be renamed to company name. in the config settings.
 <p align="center">
 <img src="https://user-images.githubusercontent.com/80905013/193426682-070255d3-cdab-4733-bc82-0139f16ca850.png" align="center" width="50%">
+</p>
+
+- Optional toolBar instead of the above dropdown menu, it includes a quicksave with a specific naming convention / versioning to the specific show / shot. wip!
+<p align="center">
+<img src="https://user-images.githubusercontent.com/80905013/196048340-bc0a005d-658b-49cd-ab57-40ad49d97026.gif" align="center" width="50%">
 </p>
 
 - Maya Scene Manager, to import assets for specific project / show.
