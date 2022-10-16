@@ -32,11 +32,10 @@ class SaveSave():
         cmds.separator(hr=False, width=16)
         self.incremental_up = cmds.button(label="^", bgc=self.bg_SIMPLE_BUTTONS, command=self.button_incremental_up, width=40)
         self.incremental_down = cmds.button(label="v", bgc=self.bg_SIMPLE_BUTTONS, command=self.button_incremental_down, width=40)
-        self.save_button = cmds.button(label="SaveSave", bgc=self.bg_GREEN, width=75, command=self.save_button_func)
+        cmds.button(label="ma", bgc=self.bg_GREEN, width=35, command=self.save_button_MA)
+        cmds.button(label="mb", bgc=self.bg_GREEN, width=35, command=self.save_button_MB)
+        cmds.button(label="^^", bgc=self.bg_GREEN, width=35, command=self.save_increment)
         cmds.separator(hr=True)
-        self.status_bar = cmds.textField(width=250)
-
-        cmds.setParent('..')
 
         self.startup_update_save_field(self)
         self.add_scriptJob()
@@ -44,11 +43,41 @@ class SaveSave():
 
 
 
-    def save_button_func(self, *args):
+    def save_increment(self, *args):
+        """ quick version up and save file. """
+
+        try:
+            # If the scene is "Untitled" and has not been saved, then we can not get index 2, so pass
+            file_name = os.path.basename(self.scene_name).split('.')[1]
+            self.button_incremental_up()
+
+            if file_name == "mb":
+                self.save_button_MB(self)
+            elif file_name == "ma":
+                self.save_button_MA(self)
+
+        except IndexError:
+            pass
+
+
+
+
+    def save_button_MA(self, *args):
         """ Executes when button is pushed. """
-        # WIP
-        cmds.textField(self.status_bar, edit=True, text="Saving")
-        cmds.textField(self.status_bar, edit=True, text="bxx_010_task_v01_001")
+
+        save_name = cmds.textField(self.save_name_field, query=True, text=True)
+        cmds.file(rename=save_name + '.ma')
+        cmds.file(save=True, type='mayaAscii')
+
+
+
+
+    def save_button_MB(self, *args):
+        """ Executes when button is pushed. """
+
+        save_name = cmds.textField(self.save_name_field, query=True, text=True)
+        cmds.file(rename=save_name + '.mb')
+        cmds.file(save=True, type='mayaBinary')
 
 
 
