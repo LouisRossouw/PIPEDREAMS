@@ -31,7 +31,7 @@
 
 - Optional toolBar instead of the above dropdown menu, it includes a quicksave with a specific naming convention / versioning to the specific show / shot. wip!
 <p align="center">
-<img src="https://user-images.githubusercontent.com/80905013/196048340-bc0a005d-658b-49cd-ab57-40ad49d97026.gif" align="center" width="50%">
+<img src="https://user-images.githubusercontent.com/80905013/196048340-bc0a005d-658b-49cd-ab57-40ad49d97026.gif" align="center" width="100%">
 </p>
 
 - Maya Scene Manager, to import assets for specific project / show.
