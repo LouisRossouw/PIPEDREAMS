@@ -65,8 +65,9 @@ class SaveSave():
     def save_button_MA(self, *args):
         """ Executes when button is pushed. """
 
+        scene_name = os.path.dirname(cmds.file(q=True, sn=True))
         save_name = cmds.textField(self.save_name_field, query=True, text=True)
-        cmds.file(rename=save_name + '.ma')
+        cmds.file(rename=scene_name + "/" + save_name + '.ma')
         cmds.file(save=True, type='mayaAscii')
 
 
@@ -75,8 +76,9 @@ class SaveSave():
     def save_button_MB(self, *args):
         """ Executes when button is pushed. """
 
+        scene_name = os.path.dirname(cmds.file(q=True, sn=True))
         save_name = cmds.textField(self.save_name_field, query=True, text=True)
-        cmds.file(rename=save_name + '.mb')
+        cmds.file(rename=scene_name + "/" + save_name + '.mb')
         cmds.file(save=True, type='mayaBinary')
 
 
