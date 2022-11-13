@@ -524,7 +524,9 @@ def Export_Manager():
                 selection_formatted += ' -root ' + sel
                 # formats into single string ex |pCube1|pSphere1|pCube2|group1|pCube3
 
-            command_new = "-frameRange " + str(query_start) + " " + str(query_end) + " -uvWrite -worldSpace -writeVisibility -writeUVSets -dataFormat ogawa" + selection_formatted + " -file " + save_file + ".abc"
+            formatted_path = '"' + save_file + '.abc' + '"'
+            
+            command_new = "-frameRange " + str(query_start) + " " + str(query_end) + " -uvWrite -worldSpace -writeVisibility -writeUVSets -dataFormat ogawa" + selection_formatted + " -file " + formatted_path
             cmds.AbcExport(j=command_new)
 
 
