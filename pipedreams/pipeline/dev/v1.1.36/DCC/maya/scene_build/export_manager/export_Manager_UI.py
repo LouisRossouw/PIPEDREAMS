@@ -5,12 +5,14 @@ import random
 
 import maya.cmds as cmds
 from functools import partial
-
+import pymel.core as pm
 
 # local app/lib imports
 import scene_build.export_manager.export as export
 import scene_build.export_manager.export_utils as utils
 
+
+pm.loadPlugin("fbxmaya")
 
 
 def Export_Manager():
@@ -465,7 +467,7 @@ def Export_Manager():
         elif query_format_check == "abc":
             exportAlembic(save_file, query_start, query_end, query_category)
         elif query_format_check == "fbx":
-            print("")
+            exportFBX(save_file)
         elif query_format_check == "obj":
             export_OBJ(save_file)
 
@@ -501,6 +503,18 @@ def Export_Manager():
             objects = objects_to_select
 
         return(objects)
+
+
+
+
+    def exportFBX(save_file):
+        """ Export FBX. """
+
+        selection_list = cmds.ls(selection=True)
+
+        for obj in selection_list:
+            cmds.select(obj)
+            pm.mel.FBXExport(f=save_file)
 
 
 
