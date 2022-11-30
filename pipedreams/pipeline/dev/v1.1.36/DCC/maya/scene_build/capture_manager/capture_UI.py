@@ -123,7 +123,7 @@ def capture_UI():
         """ updates the Captures name text field on command change """
 
         cmds.textField(UI_captureName_path, edit=True, text=args[0])
-
+        update_version()
 
 
 
