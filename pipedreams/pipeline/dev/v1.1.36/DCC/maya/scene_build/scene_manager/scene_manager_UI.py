@@ -14,14 +14,43 @@ def Scene_Manager_UI():
 
 
 
-
-
     def clearOptionMenu(optionMneu_path):
         """ pass the optionmenu and it will clear all the items """
 
         # loop through existing menus in the optionMenu and destroy them
         for item in cmds.optionMenu(optionMneu_path, q=True, ill=True) or []:
             cmds.deleteUI(item)
+
+
+    def updateAsset(*args):
+        """ Attempts to update the referenced asset - if using a namespace, it wont work. """
+
+        # check version number
+        asset_name = UI_data[args[0]]["asset_name"]
+        asset_base_path = UI_data[args[0]]["asset_path"]
+        catagory = UI_data[args[0]]["catagory"]
+        extension = UI_data[args[0]]["extension"]
+
+        versions_path = args[1]
+        asset_type_path = args[2]
+
+        asset_type = cmds.optionMenu(asset_type_path, query=True, value=True)
+        current_version = cmds.optionMenu(versions_path, query=True, value=True)
+        extension_type = cmds.optionMenu(extension, query=True, value=True)
+
+        path_to_assets_dir = asset_base_path + "/" + asset_type + "/" + current_version
+        asset_path = path_to_assets_dir + "/" + asset_name + "_" + asset_type + "_" + current_version
+        full_asset_path = asset_path + "." + extension_type
+
+        # check if file exists
+        exists = cmds.file(full_asset_path, query=True, exists=True)
+        if exists == True:
+            refNodes = cmds.ls(type="reference")
+            for ref in refNodes:
+
+                if str(asset_name+"_"+asset_type) in str(ref):
+                    print("Updating Reference for: ", asset_name)
+                    cmds.file(full_asset_path, loadReference=ref)
 
 
 
@@ -99,8 +128,12 @@ def Scene_Manager_UI():
 
 
             elif button_pushed == "Reference":
-                cmds.file(full_asset_path, r=True, namespace=catagory)
+                Namespace_query = (cmds.checkBox(UI_data["Namespace_query"], query=True, value=True))
 
+                if Namespace_query == True:
+                    cmds.file(full_asset_path, r=True, namespace=catagory)
+                elif Namespace_query == False:
+                    cmds.file(full_asset_path, r=True, dns=True)
 
 
 
@@ -178,7 +211,7 @@ def Scene_Manager_UI():
         cmds.frameLayout(label=catagory, cll=closed, cl=True, mh=10)
         # cmds.rowColumnLayout(numberOfColumns=10, columnAttach=(1, 'left', 0), columnWidth=[(10, 100), (2, 250)])
 
-        cmds.gridLayout(numberOfColumns=6, cellWidthHeight=(100, 20))
+        cmds.gridLayout(numberOfColumns=7, cellWidthHeight=(100, 20))
 
         if TAB == "TOP_ASSETS":
             # gets the list of items for this specific asset type
@@ -254,9 +287,18 @@ def Scene_Manager_UI():
                 UI_data[refrence_button] = {"asset_name":asset, "asset_path":asset_path, "catagory":catagory, "extension":extensions_button}
                 cmds.button(refrence_button, e=True, c=partial(importAsset, refrence_button, versions, type_button))
 
+    # Update Button
+                update_button = cmds.button(label="Update", bgc=(0.65, 1, 0))
+                UI_data[update_button] = {"asset_name":asset, "asset_path":asset_path, "catagory":catagory, "extension":extensions_button}
+                cmds.button(update_button, e=True, c=partial(updateAsset, update_button, versions, type_button))
+
+
                 UI_data[type_button] = {"asset": asset, "version_button": versions, "asset_path" : asset_path, "extensions":extensions_button}
 
                 cmds.optionMenu(versions, e=True, changeCommand=partial(updateExtensions, versions, asset_path, type_button, extensions_button))
+
+
+
 
 
         except Exception as e:
@@ -267,6 +309,9 @@ def Scene_Manager_UI():
         """ Reloads the UI """
 
         cmds.evalDeferred(Scene_Manager_UI)
+
+
+
 
 
 ### MAIN UI
@@ -308,6 +353,8 @@ def Scene_Manager_UI():
     cmds.rowColumnLayout(numberOfColumns=2, columnAttach=(1, 'right', 0), columnWidth=[(10, 100), (2, 250)])
 
     cmds.button(label="Refresh", command=reloadUI)
+    Namespace_query = cmds.checkBox(label="Namespace")
+    UI_data["Namespace_query"] = Namespace_query
     cmds.setParent('..')
 
     # Tab Setup
