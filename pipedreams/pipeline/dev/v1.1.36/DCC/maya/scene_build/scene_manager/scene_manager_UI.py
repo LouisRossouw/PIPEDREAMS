@@ -407,8 +407,8 @@ def Scene_Manager_UI():
     cmds.rowColumnLayout(numberOfColumns=6)
     cmds.separator( height=10, style='in' )
 
-    import_SRT_checkBox = cmds.checkBox(label="Import under Scene_SRT", value=True)
-    test_1 = cmds.checkBox(label="Test", value=False)
+    # import_SRT_checkBox = cmds.checkBox(label="Import under Scene_SRT", value=True)
+    # test_1 = cmds.checkBox(label="Test", value=False)
 
     cmds.separator( height=10, style='in' )
     cmds.setParent(shot_assets_row)
