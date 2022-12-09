@@ -61,32 +61,51 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
         for cat in ["Char", "Veh", "Env"]:
 
-            groupBox = QtWidgets.QGroupBox(cat)
-            cat_layout = QtWidgets.QVBoxLayout()
-            groupBox.setLayout(cat_layout)
-            # groupBox.setCheckable(True)
-            # Build buttons for single Asset
+            self.groupBox = QtWidgets.QGroupBox(cat)
+            layout_Global_Assets.addWidget(self.groupBox)
 
+            self.groupBox.setCheckable(True)
+
+            self.v_layout = QtWidgets.QVBoxLayout()
+            self.groupBox.setLayout(self.v_layout)
+            
+
+            # Build buttons for single Asset
             for i in range(3):
-                asset_layout = QtWidgets.QHBoxLayout()
-                # groupBox.setLayout(asset_layout)
+
+                self.asset_layout = QtWidgets.QHBoxLayout()
+                
+                asset_Label = QtWidgets.QLabel("Hello")
+                asset_Label.setAlignment(QtCore.Qt.AlignHCenter)
+                asset_type = QtWidgets.QComboBox()
+                asset_version = QtWidgets.QComboBox()
+                asset_format = QtWidgets.QComboBox()
 
                 Import_button = QtWidgets.QPushButton("Import")
                 Refrence_button = QtWidgets.QPushButton("Refrence")
                 Update_button = QtWidgets.QPushButton("Update")
 
-                asset_layout.addWidget(Import_button)
-                asset_layout.addWidget(Refrence_button)
-                asset_layout.addWidget(Update_button)
+                asset_user = QtWidgets.QLabel("Louis")
+                asset_user.setAlignment(QtCore.Qt.AlignHCenter)
 
-                #cat_layout.addWidget(asset_layout)
-                
-                # cat_layout.addWidget(asset_layout)
-            # layout_Global_Assets.addWidget(groupBox)
-        # layout_Global_Assets.addWidget(QtWidgets.QPushButton("Button"))
-            # layout_Global_Assets.addWidget(groupBox)
-            # for i in range(5):
-            #   layout_Global_Assets.addWidget(QtWidgets.QPushButton("Button" + str(i)))
+                self.asset_layout.addWidget(asset_Label)
+                self.asset_layout.addWidget(asset_type)
+                self.asset_layout.addWidget(asset_version)
+                self.asset_layout.addWidget(asset_format)
+
+                self.asset_layout.addWidget(Import_button)
+                self.asset_layout.addWidget(Refrence_button)
+                self.asset_layout.addWidget(Update_button)
+
+                self.asset_layout.addWidget(asset_user)
+
+                self.line = QtWidgets.QFrame()
+                self.line.setFrameShape(QtWidgets.QFrame.HLine)
+                self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+                self.v_layout.addWidget(self.line)
+
+                self.v_layout.addLayout(self.asset_layout)
+
 
 
 # Master Layout:
@@ -97,16 +116,16 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         self.setLayout(master_layout)
 
 # StyleSheet:
-        # self.setStyleSheet('background-color: grey;')
-        # Refresh_button.setStyleSheet('background-color: grey;'
-        #                           'border-style: outset;'
-        #                           'border-width: 2px;'
-        #                           'border-radius: 10px;'
-        #                           'border-color: beige;'
-        #                           'font: bold 14px;'
-        #                           'min-width: 10em;'
-        #                           'padding: 6px;'
-        #                           )
+        self.setStyleSheet('background-color: grey;')
+        Refresh_button.setStyleSheet('background-color: grey;'
+                                  'border-style: outset;'
+                                  'border-width: 2px;'
+                                  'border-radius: 10px;'
+                                  'border-color: black;'
+                                  'font: bold 14px;'
+                                  'min-width: 10em;'
+                                  'padding: 6px;'
+                                  )
 
 app = QtWidgets.QApplication()
 Scene_Manager_UI = Scene_Manager_UI()
