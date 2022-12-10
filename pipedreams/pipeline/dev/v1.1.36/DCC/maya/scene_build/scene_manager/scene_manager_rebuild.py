@@ -12,7 +12,9 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         super().__init__()
 
         self.setWindowTitle("Scene Manager")
-        self.setMinimumSize(QtCore.QSize(1500, 400))
+        self.project_name = os.getenv('PROJECT_NAME')
+        self.setMinimumSize(QtCore.QSize(1200, 400))
+
 
     # Top Layout:
 
@@ -23,7 +25,7 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
         font.setBold(True)
         label.setFont(font)
-        label.setText("Go_Testify_rigging_010")
+        label.setText(self.project_name)
         label.setAlignment(QtCore.Qt.AlignHCenter)
         topLayout.addWidget(label)
         topLayout.addWidget(Refresh_button)
@@ -61,8 +63,6 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
     # Populate Tabs:
 
-        # category = self.return_existing_categories()
-
         TABS = ["TOP", "SHOT"]
 
         for tab in TABS:
@@ -72,7 +72,6 @@ class Scene_Manager_UI(QtWidgets.QWidget):
             for cat in category[0]:
 
                 self.groupBox = QtWidgets.QGroupBox(cat)
-
                 self.groupBox.setCheckable(True)
 
                 self.v_layout = QtWidgets.QVBoxLayout()
@@ -88,14 +87,16 @@ class Scene_Manager_UI(QtWidgets.QWidget):
                 if tab == "SHOT":
                     self.layout_Shot_Assets.addWidget(self.groupBox)
 
-        # Master Layout:
+
+    # Master Layout:
 
         master_layout = QtWidgets.QVBoxLayout()
         master_layout.addLayout(topLayout)
         master_layout.addWidget(Tab_group)
         self.setLayout(master_layout)
 
-        # StyleSheet:
+
+    # StyleSheet:
 
         self.setStyleSheet('background-color: grey;')
         Refresh_button.setStyleSheet('background-color: grey;'
@@ -144,17 +145,14 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
             self.asset_layout.addWidget(asset_user)
 
-            self.line = QtWidgets.QFrame()
-            self.line.setFrameShape(QtWidgets.QFrame.HLine)
-            self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-            self.v_layout.addWidget(self.line)
-
             # add data to the comboBox / optionMenus
             asset_data = self.return_assets(category_path + "/" + i)
 
             asset_type.addItems(asset_data[0])
             asset_version.addItems(asset_data[1])
             asset_format.addItems(asset_data[2])
+
+
 
             # add to layout.
             self.v_layout.addLayout(self.asset_layout)
@@ -177,9 +175,11 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
         asset_types = os.listdir(asset_path)
         versions = os.listdir(asset_path + "/" + asset_types[0])
+
         files_formats = os.listdir(asset_path + "/" + asset_types[0] + "/" + versions[0])
 
         formats = []
+
         for f in files_formats:
             format = f.split(".")[1]
             formats.append(format)
@@ -187,7 +187,9 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         return asset_types, reversed(versions), formats
 
 
+    def reorder(self, asset_type):
 
+        print(asset_type.currentText())
 
 
 
