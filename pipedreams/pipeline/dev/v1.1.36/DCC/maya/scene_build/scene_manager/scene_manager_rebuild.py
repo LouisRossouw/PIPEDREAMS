@@ -20,7 +20,6 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         label = QtWidgets.QLabel()
         font = QtGui.QFont()
         Refresh_button = QtWidgets.QPushButton(text="Refresh")
-        Refresh_button.clicked.connect(self.return_existing_categories)
 
         font.setBold(True)
         label.setFont(font)
@@ -40,8 +39,8 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
         Tab_group = QtWidgets.QTabWidget()
         self.layout_Global_Assets = QtWidgets.QVBoxLayout()
-        self.layout_Top_Assets = QtWidgets.QHBoxLayout()
-        self.layout_Shot_Assets = QtWidgets.QHBoxLayout()
+        self.layout_Top_Assets = QtWidgets.QVBoxLayout()
+        self.layout_Shot_Assets = QtWidgets.QVBoxLayout()
 
         tab_1 = QtWidgets.QWidget()
         tab_1.setLayout(self.layout_Global_Assets)
@@ -67,11 +66,10 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         TABS = ["TOP", "SHOT"]
 
         for tab in TABS:
-            print(tab)
+
             category = self.return_existing_categories(tab)
 
-
-            for cat in category:
+            for cat in category[0]:
 
                 self.groupBox = QtWidgets.QGroupBox(cat)
 
@@ -81,7 +79,7 @@ class Scene_Manager_UI(QtWidgets.QWidget):
                 self.groupBox.setLayout(self.v_layout)
 
                 # Populate specific category with all existing assets.
-                self.populate_assets()
+                self.populate_assets(cat, category[1])
 
                 if tab == "GLOBAL":
                     self.layout_Global_Assets.addWidget(self.groupBox)
@@ -111,14 +109,18 @@ class Scene_Manager_UI(QtWidgets.QWidget):
                 )
 
 
-    def populate_assets(self):
+    def populate_assets(self, category, path):
         """ Populates all assets for specific category. """
 
+        category_path = path + '/' + category
+        category_dir = os.listdir(category_path)
+
         # Build buttons for single Asset
-        for i in range(3):
+        for i in category_dir:
+
             self.asset_layout = QtWidgets.QHBoxLayout()
 
-            asset_Label = QtWidgets.QLabel("Hello")
+            asset_Label = QtWidgets.QLabel(i)
             asset_Label.setAlignment(QtCore.Qt.AlignHCenter)
             asset_type = QtWidgets.QComboBox()
             asset_version = QtWidgets.QComboBox()
@@ -147,6 +149,14 @@ class Scene_Manager_UI(QtWidgets.QWidget):
             self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
             self.v_layout.addWidget(self.line)
 
+            # add data to the comboBox / optionMenus
+            asset_data = self.return_assets(category_path + "/" + i)
+
+            asset_type.addItems(asset_data[0])
+            asset_version.addItems(asset_data[1])
+            asset_format.addItems(asset_data[2])
+
+            # add to layout.
             self.v_layout.addLayout(self.asset_layout)
 
 
@@ -156,16 +166,26 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
         asset_tab = tab + "_ASSETS"
 
-        existing_ASSETS = os.getenv(asset_tab)
-        existing_categories = os.listdir(existing_ASSETS)
+        existing_ASSETS_path = os.getenv(asset_tab)
+        existing_categories = os.listdir(existing_ASSETS_path)
 
-        return existing_categories
+        return existing_categories, existing_ASSETS_path
 
 
-    def return_assets(path, category):
+    def return_assets(path, asset_path):
         """ Returns the list of assets for the specific category. """
 
-        print(path, category)
+        asset_types = os.listdir(asset_path)
+        versions = os.listdir(asset_path + "/" + asset_types[0])
+        files_formats = os.listdir(asset_path + "/" + asset_types[0] + "/" + versions[0])
+
+        formats = []
+        for f in files_formats:
+            format = f.split(".")[1]
+            formats.append(format)
+
+        return asset_types, reversed(versions), formats
+
 
 
 
