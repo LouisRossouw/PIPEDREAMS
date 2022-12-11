@@ -14,8 +14,9 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
         self.setWindowTitle("Scene Manager")
         self.project_name = os.getenv('PROJECT_NAME')
-        self.setMinimumSize(QtCore.QSize(1200, 400))
+        # self.setMinimumWidth(800)
 
+        self.ignore_formats = ["mtl"]
 
     # Top Layout:
 
@@ -41,9 +42,15 @@ class Scene_Manager_UI(QtWidgets.QWidget):
     # Tabs Layout:
 
         Tab_group = QtWidgets.QTabWidget()
+        Tab_group.tabBarClicked.connect(self.tab_resize)
+
         self.layout_Global_Assets = QtWidgets.QVBoxLayout()
         self.layout_Top_Assets = QtWidgets.QVBoxLayout()
         self.layout_Shot_Assets = QtWidgets.QVBoxLayout()
+
+        # self.layout_Global_Assets.addStretch()
+        # self.layout_Shot_Assets.addStretch()
+        # self.layout_Top_Assets.addStretch()
 
         tab_1 = QtWidgets.QWidget()
         tab_1.setLayout(self.layout_Global_Assets)
@@ -65,22 +72,31 @@ class Scene_Manager_UI(QtWidgets.QWidget):
     # Populate Tabs:
 
         TABS = ["TOP", "SHOT"]
+
         self.asset_dict = {}
+        self.total_asset_count = {}
 
         for tab in TABS:
 
+            total_asset_count = 0
             category = self.return_existing_categories(tab)
 
             for cat in category[0]:
 
                 self.groupBox = QtWidgets.QGroupBox(cat)
                 self.groupBox.setCheckable(True)
+                # self.groupBox.setMinimumHeight(10)
 
                 self.v_layout = QtWidgets.QVBoxLayout()
+                # self.v_layout.addStretch()
                 self.groupBox.setLayout(self.v_layout)
 
                 # Populate specific category with all existing assets.
-                self.populate_assets(cat, category[1], tab)
+                row_count = self.populate_assets(cat, category[1], tab)
+
+                # add total count of assets for the Tab.
+                total_asset_count += row_count
+                self.total_asset_count[tab] = total_asset_count
 
                 if tab == "GLOBAL":
                     self.layout_Global_Assets.addWidget(self.groupBox)
@@ -110,6 +126,23 @@ class Scene_Manager_UI(QtWidgets.QWidget):
                 'min-width: 10em;'
                 'padding: 6px;'
                 )
+
+
+
+
+    def tab_resize(self, tab_index):
+
+        if tab_index == 0: # Globbal_Assets
+            pass
+        if tab_index == 1: # Top_Assets
+            amount = self.total_asset_count["TOP"]
+            y_Size = 150
+            self.setFixedSize(QtCore.QSize(900, y_Size + (50 * amount)))
+
+        if tab_index == 2:  # Shot_Assets
+            amount = self.total_asset_count["SHOT"]
+            y_Size = 150
+            self.setMinimumSize(QtCore.QSize(900, y_Size + (50 * amount)))
 
 
 
@@ -162,9 +195,12 @@ class Scene_Manager_UI(QtWidgets.QWidget):
                                             "asset_path": category_path
                                            }
 
+            # Connect QcomboBoxs
+            self.asset_type.activated.connect(partial(self.TYPE_comboBox_change, unique_name))
+            self.asset_version.activated.connect(partial(self.FORMAT_comboBox_change, unique_name))
 
             # add data to the comboBox / optionMenus
-            asset_data = self.return_assets(category_path + "/" + i)
+            asset_data = self.return_assets(path, category_path + "/" + i)
 
             self.asset_type.addItems(asset_data[0])
             self.asset_version.addItems(asset_data[1])
@@ -173,20 +209,105 @@ class Scene_Manager_UI(QtWidgets.QWidget):
             # add to layout.
             self.v_layout.addLayout(self.asset_layout)
 
+        return row_index
+
+
+
+
+    def return_dict(self, row_index):
+        """ Return an object from specific row in the UI. """
+
+        # Returns asset info from row.
+        asset_name = self.asset_dict[row_index]["asset_name"]
+        asset_type = self.asset_dict[row_index]["asset_type"]
+        asset_version = self.asset_dict[row_index]["asset_version"]
+        asset_format = self.asset_dict[row_index]["asset_format"]
+        asset_path = self.asset_dict[row_index]["asset_path"]
+
+        return {
+                "asset_name":asset_name,
+                "asset_type":asset_type,
+                "asset_version":asset_version,
+                "asset_format":asset_format,
+                "asset_path":asset_path
+                }
+
+
+
+
+    def strip_extensions(self, return_formats):
+        """ Strips the extension from the names. """
+
+        ext_list = []
+
+        for f in return_formats:
+            ext = f.split(".")[1]
+
+            if ext not in self.ignore_formats:
+                ext_list.append(ext)
+
+        return ext_list
+
+
+
+
+    def return_asset(self, row_index, comboBox):
+        """ Returns QcomboBox object from specific row, to query it. """
+
+        return self.return_dict(row_index)[comboBox]
+
+
+
+
+    def FORMAT_comboBox_change(self, row_index, type):
+        """ ComboBox change function to update the versions and formats comboBox
+            based on what is in the directories. """
+
+        T_comboBox_obj = self.return_asset(row_index, "asset_type").currentText()
+        V_comboBox_obj = self.return_asset(row_index, "asset_version").currentText()
+        F_comboBox_obj = self.return_asset(row_index, "asset_format")
+
+        asset_name = self.return_asset(row_index, "asset_name")
+        asset_path = self.return_asset(row_index, "asset_path")
+
+        path = asset_path + "/" + asset_name + "/" + T_comboBox_obj + "/" + V_comboBox_obj
+        return_formats = os.listdir(path)
+        ext_list = self.strip_extensions(return_formats)
+
+        # Update versions comboBox
+        F_comboBox_obj.clear()
+        F_comboBox_obj.addItems(ext_list)
+
+
+
+
+    def TYPE_comboBox_change(self, row_index, type):
+        """ ComboBox change function to update the versions and formats comboBox
+            based on what is in the directories. """
+
+        T_comboBox_obj = self.return_asset(row_index, "asset_type").currentText()
+        V_comboBox_obj = self.return_asset(row_index, "asset_version")
+
+        asset_name = self.return_asset(row_index, "asset_name")
+        asset_path = self.return_asset(row_index, "asset_path")
+
+        path = asset_path + "/" + asset_name + "/" + T_comboBox_obj
+        return_versions = os.listdir(path)
+
+        # Update versions comboBox
+        V_comboBox_obj.clear()
+        V_comboBox_obj.addItems(reversed(return_versions))
+
+        self.FORMAT_comboBox_change(row_index, type)
+
 
 
 
     def button_import(self, row_index):
-        """ Function for import button when cllicked. """
+        """ Function for import button when clicked. """
 
-        # Returns asset info from row.
-        asset_name = self.asset_dict[row_index]["asset_name"]
-        asset_type = self.asset_dict[row_index]["asset_type"].currentText()
-        asset_version = self.asset_dict[row_index]["asset_version"].currentText()
-        asset_format = self.asset_dict[row_index]["asset_format"].currentText()
-        asset_path = self.asset_dict[row_index]["asset_path"]
-
-        print(asset_name, asset_type, asset_version, asset_format, asset_path)
+        dict = self.return_dict(row_index)
+        print(dict["asset_format"])
 
 
 
@@ -204,29 +325,16 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
 
 
-    def return_assets(path, asset_path):
+    def return_assets(self, path, asset_path):
         """ Returns the list of assets for the specific category. """
 
         asset_types = os.listdir(asset_path)
         versions = os.listdir(asset_path + "/" + asset_types[0])
 
         files_formats = os.listdir(asset_path + "/" + asset_types[0] + "/" + versions[0])
-
-        formats = []
-
-        for f in files_formats:
-            format = f.split(".")[1]
-            formats.append(format)
+        formats = self.strip_extensions(files_formats)
 
         return asset_types, reversed(versions), formats
-
-
-
-
-    def reorder(self, asset_type):
-
-        print(asset_type.currentText())
-
 
 
 
