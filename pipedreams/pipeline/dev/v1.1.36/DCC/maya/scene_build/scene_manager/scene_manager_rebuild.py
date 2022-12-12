@@ -48,10 +48,6 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         self.layout_Top_Assets = QtWidgets.QVBoxLayout()
         self.layout_Shot_Assets = QtWidgets.QVBoxLayout()
 
-        # self.layout_Global_Assets.addStretch()
-        # self.layout_Shot_Assets.addStretch()
-        # self.layout_Top_Assets.addStretch()
-
         tab_1 = QtWidgets.QWidget()
         tab_1.setLayout(self.layout_Global_Assets)
 
@@ -85,10 +81,8 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
                 self.groupBox = QtWidgets.QGroupBox(cat)
                 self.groupBox.setCheckable(True)
-                # self.groupBox.setMinimumHeight(10)
 
                 self.v_layout = QtWidgets.QVBoxLayout()
-                # self.v_layout.addStretch()
                 self.groupBox.setLayout(self.v_layout)
 
                 # Populate specific category with all existing assets.
@@ -213,6 +207,36 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
 
 
+    def button_import(self, row_index):
+        """ Function for import button when clicked. """
+
+        asset_path = self.return_selected_asset_path(row_index)
+
+        # check if file exists
+        exists = os.path.exists(asset_path)
+
+        if exists == False:
+            pass
+            # Needs a pop up dialog if cant find file.
+
+
+    def return_selected_asset_path(self, row_index):
+        """ Function for import button when clicked. """
+
+        dict = self.return_dict(row_index)
+
+        asset_path = dict["asset_path"]
+        asset_name = dict["asset_name"]
+        asset_type = dict["asset_type"].currentText()
+        asset_version = dict["asset_version"].currentText()
+        asset_format = dict["asset_format"].currentText()
+
+        file_name = asset_name + "_" + asset_type + "_" + asset_version + "." + asset_format
+        path = asset_path + "/" + asset_name + "/" + asset_type + "/" + asset_version + "/" + file_name
+
+        return path
+
+
 
     def return_dict(self, row_index):
         """ Return an object from specific row in the UI. """
@@ -303,15 +327,6 @@ class Scene_Manager_UI(QtWidgets.QWidget):
 
 
 
-    def button_import(self, row_index):
-        """ Function for import button when clicked. """
-
-        dict = self.return_dict(row_index)
-        print(dict["asset_format"])
-
-
-
-
     def return_existing_categories(self, tab):
         """ Returns the existing ca """
 
@@ -331,8 +346,10 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         asset_types = os.listdir(asset_path)
         versions = os.listdir(asset_path + "/" + asset_types[0])
 
-        files_formats = os.listdir(asset_path + "/" + asset_types[0] + "/" + versions[0])
+        files_formats = os.listdir(asset_path + "/" + asset_types[0] + "/" + versions[-1])
         formats = self.strip_extensions(files_formats)
+
+        print(asset_path, files_formats)
 
         return asset_types, reversed(versions), formats
 
