@@ -131,7 +131,7 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         if tab_index == 1: # Top_Assets
             amount = self.total_asset_count["TOP"]
             y_Size = 150
-            self.setFixedSize(QtCore.QSize(900, y_Size + (50 * amount)))
+            self.setFixedSize(QtCore.QSize(900, y_Size + (80 * amount)))
 
         if tab_index == 2:  # Shot_Assets
             amount = self.total_asset_count["SHOT"]
@@ -216,8 +216,36 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         exists = os.path.exists(asset_path)
 
         if exists == False:
+            self.popUp_message("File Not Found.", "Could not find the path to: \n\n" + str(asset_path))
+
+        elif exists == True:
+            print("Importing: " + asset_path)
+
+            DCC = os.getenv("DCC")
+
+            if DCC == "Maya":
+                pass
+            if DCC == "Houdini":
+                pass
+            if DCC == "Blender":
+                pass
+
+
+
+
+
+    def popUp_message(self, title, message):
+        """ PopUp message to use for errors etc. """
+
+        dlg = QtWidgets.QMessageBox(self)
+        dlg.setWindowTitle(title)
+        dlg.setText(message)
+        button = dlg.exec_()
+
+        if button == QtWidgets.QMessageBox.Ok:
             pass
-            # Needs a pop up dialog if cant find file.
+
+
 
 
     def return_selected_asset_path(self, row_index):
