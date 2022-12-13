@@ -77,7 +77,7 @@ def maya_env(working_dir,
     # Pipeline_root = config['Pipeline_root']
     Pipeline_root = getPipelineRoot()
 
-    set_environments = f'\nPIPELINE_ROOT = {Pipeline_root}\nPROJECT_NAME = {project_name}\nPROJECT = {usr_input_project}\nSUB_PROJECT = {usr_input_sub_project}\nSHOT = {usr_input_shot}\nSHOT_ASSETS = {shot_assets}\nTOP_ASSETS = {top_assets}\nCAPTURES = {captures}\nMAYA_USR = {maya_dir_path}\nSHOT_DATA = {shot_data}'
+    set_environments = f'\nDCC = Maya\nPIPELINE_ROOT = {Pipeline_root}\nPROJECT_NAME = {project_name}\nPROJECT = {usr_input_project}\nSUB_PROJECT = {usr_input_sub_project}\nSHOT = {usr_input_shot}\nSHOT_ASSETS = {shot_assets}\nTOP_ASSETS = {top_assets}\nCAPTURES = {captures}\nMAYA_USR = {maya_dir_path}\nSHOT_DATA = {shot_data}'
 
     # opens the custom but permanent env paths that will merge with the set shot paths
     # opens permanent env paths
