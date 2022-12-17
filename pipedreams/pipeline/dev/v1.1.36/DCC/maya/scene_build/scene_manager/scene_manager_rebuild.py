@@ -5,6 +5,8 @@ from PySide2 import (QtGui,
                     QtWidgets)
 
 
+import scene_build.scene_manager.maya_SceneManager_utils as Maya_SM_utils
+
 
 class Scene_Manager_UI(QtWidgets.QWidget):
     """ Builds the Scene Manager UI for the importing of assets. """
@@ -23,14 +25,14 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         topLayout = QtWidgets.QVBoxLayout()
         label = QtWidgets.QLabel()
         font = QtGui.QFont()
-        Refresh_button = QtWidgets.QPushButton(text="Refresh")
+        # Refresh_button = QtWidgets.QPushButton(text="Refresh")
 
         font.setBold(True)
         label.setFont(font)
         label.setText(self.project_name)
         label.setAlignment(QtCore.Qt.AlignHCenter)
         topLayout.addWidget(label)
-        topLayout.addWidget(Refresh_button)
+        # topLayout.addWidget(Refresh_button)
 
         self.line = QtWidgets.QFrame()
         self.line.setGeometry(QtCore.QRect(0, 0, 0, 0))
@@ -111,32 +113,15 @@ class Scene_Manager_UI(QtWidgets.QWidget):
     # StyleSheet:
 
         self.setStyleSheet('background-color: grey;')
-        Refresh_button.setStyleSheet('background-color: grey;'
-                'border-style: outset;'
-                'border-width: 2px;'
-                'border-radius: 10px;'
-                'border-color: black;'
-                'font: bold 14px;'
-                'min-width: 10em;'
-                'padding: 6px;'
-                )
-
-
-
-
-    def tab_resize(self, tab_index):
-
-        if tab_index == 0: # Globbal_Assets
-            pass
-        if tab_index == 1: # Top_Assets
-            amount = self.total_asset_count["TOP"]
-            y_Size = 150
-            self.setFixedSize(QtCore.QSize(900, y_Size + (80 * amount)))
-
-        if tab_index == 2:  # Shot_Assets
-            amount = self.total_asset_count["SHOT"]
-            y_Size = 150
-            self.setMinimumSize(QtCore.QSize(900, y_Size + (50 * amount)))
+        # Refresh_button.setStyleSheet('background-color: grey;'
+        #         'border-style: outset;'
+        #         'border-width: 2px;'
+        #         'border-radius: 10px;'
+        #         'border-color: black;'
+        #         'font: bold 14px;'
+        #         'min-width: 10em;'
+        #         'padding: 6px;'
+        #         )
 
 
 
@@ -162,10 +147,11 @@ class Scene_Manager_UI(QtWidgets.QWidget):
             self.asset_type = QtWidgets.QComboBox()
             self.asset_version = QtWidgets.QComboBox()
             self.asset_format = QtWidgets.QComboBox()
+            # self.name_space = QtWidgets.QCheckBox("NS", )
 
             self.Import_button = QtWidgets.QPushButton("Import", clicked=partial(self.button_import, unique_name))
-            self.Refrence_button = QtWidgets.QPushButton("Refrence")
-            self.Update_button = QtWidgets.QPushButton("Update")
+            self.Refrence_button = QtWidgets.QPushButton("Refrence", clicked=partial(self.button_refrence, unique_name))
+            self.Update_button = QtWidgets.QPushButton("Reload", clicked=partial(self.button_reload, unique_name))
 
             asset_user = QtWidgets.QLabel("Louis")
             asset_user.setAlignment(QtCore.Qt.AlignHCenter)
@@ -174,6 +160,7 @@ class Scene_Manager_UI(QtWidgets.QWidget):
             self.asset_layout.addWidget(self.asset_type)
             self.asset_layout.addWidget(self.asset_version)
             self.asset_layout.addWidget(self.asset_format)
+            # self.asset_layout.addWidget(self.name_space)
 
             self.asset_layout.addWidget(self.Import_button)
             self.asset_layout.addWidget(self.Refrence_button)
@@ -186,7 +173,8 @@ class Scene_Manager_UI(QtWidgets.QWidget):
                                             "asset_type": self.asset_type,
                                             "asset_version": self.asset_version,
                                             "asset_format": self.asset_format,
-                                            "asset_path": category_path
+                                            "asset_path": category_path,
+                                            "category": category,
                                            }
 
             # Connect QcomboBoxs
@@ -206,30 +194,91 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         return row_index
 
 
+    def tab_resize(self, tab_index):
 
-    def button_import(self, row_index):
-        """ Function for import button when clicked. """
+        if tab_index == 0: # Globbal_Assets
+            pass
+        if tab_index == 1: # Top_Assets
+            amount = self.total_asset_count["TOP"]
+            y_Size = 150
+            self.setFixedSize(QtCore.QSize(900, y_Size + (80 * amount)))
 
-        asset_path = self.return_selected_asset_path(row_index)
+        if tab_index == 2:  # Shot_Assets
+            amount = self.total_asset_count["SHOT"]
+            y_Size = 150
+            self.setMinimumSize(QtCore.QSize(900, y_Size + (50 * amount)))
 
-        # check if file exists
+
+
+
+    def check_file_exists(self, asset_path):
+        """ Check if file exists. """
+
+        print(asset_path)
         exists = os.path.exists(asset_path)
 
         if exists == False:
             self.popUp_message("File Not Found.", "Could not find the path to: \n\n" + str(asset_path))
+            status = False
 
         elif exists == True:
-            print("Importing: " + asset_path)
+            print(asset_path)
+            status = True
+
+        return status
+
+
+
+
+    def execute_import(self, action, row_index):
+        """ Executes the import function across DCCs. """
+
+        selected_asset_data = self.return_selected_asset_path(row_index)
+
+        asset_path = selected_asset_data[0]
+        asset_type = selected_asset_data[2]
+        catagory = selected_asset_data[5]
+        asset_name = selected_asset_data[1]
+        current_version = selected_asset_data[3]
+        NameSpace = selected_asset_data[6]
+
+        exists = self.check_file_exists(asset_path)
+
+        if exists != False:
 
             DCC = os.getenv("DCC")
 
             if DCC == "Maya":
-                pass
+                Maya_SM_utils.import_asset(action, asset_path,
+                                           asset_type, catagory,
+                                           asset_name, current_version, NameSpace)
+
             if DCC == "Houdini":
                 pass
+
             if DCC == "Blender":
                 pass
 
+
+
+
+    def button_reload(self, row_index):
+        """ Function for Reload button when clicked. """
+        self.execute_import("Reload", row_index)
+
+
+
+
+    def button_refrence(self, row_index):
+        """ Function for refrence button when clicked. """
+        self.execute_import("Reference", row_index)
+
+
+
+
+    def button_import(self, row_index):
+        """ Function for import button when clicked. """
+        self.execute_import("Import", row_index)
 
 
 
@@ -258,11 +307,16 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         asset_type = dict["asset_type"].currentText()
         asset_version = dict["asset_version"].currentText()
         asset_format = dict["asset_format"].currentText()
+        category = dict["category"]
+        NameSpace = dict["NameSpace"]
 
         file_name = asset_name + "_" + asset_type + "_" + asset_version + "." + asset_format
         path = asset_path + "/" + asset_name + "/" + asset_type + "/" + asset_version + "/" + file_name
 
-        return path
+        data = [path, asset_name, asset_type, asset_version, asset_format, category, NameSpace]
+
+        return data
+
 
 
 
@@ -275,13 +329,17 @@ class Scene_Manager_UI(QtWidgets.QWidget):
         asset_version = self.asset_dict[row_index]["asset_version"]
         asset_format = self.asset_dict[row_index]["asset_format"]
         asset_path = self.asset_dict[row_index]["asset_path"]
+        category = self.asset_dict[row_index]["category"]
+        NameSpace = False
 
         return {
                 "asset_name":asset_name,
                 "asset_type":asset_type,
                 "asset_version":asset_version,
                 "asset_format":asset_format,
-                "asset_path":asset_path
+                "asset_path":asset_path,
+                "category": category,
+                "NameSpace": NameSpace
                 }
 
 
