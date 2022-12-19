@@ -16,7 +16,7 @@ import toolutils.RandomHide as RandomHide
 import toolutils.StudioLib as StudioLib
 import scene_build.capture_manager.capture_UI as cap_UI
 import scene_build.export_manager.export_Manager_UI as export_UI
-import scene_build.scene_manager.scene_manager_UI as scn_manager_UI
+import scene_build.scene_manager.scene_manager_rebuild as scn_manager_UI
 
 
 
@@ -95,7 +95,7 @@ class ToolBar():
         clicked_button = args[0]
 
         if clicked_button == "Scene Manager":
-            scn_manager_UI.Scene_Manager_UI()
+            scn_manager_UI.Scene_Manager_UI().show()
 
         if clicked_button == "Export Manager":
             export_UI.Export_Manager()
