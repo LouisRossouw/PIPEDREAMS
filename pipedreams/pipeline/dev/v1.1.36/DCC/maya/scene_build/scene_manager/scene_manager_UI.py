@@ -1,436 +1,440 @@
 import os
-import maya.cmds as cmds
-
 from functools import partial
+from PySide2 import (QtGui,
+                    QtCore,
+                    QtWidgets)
+
+import scene_build.scene_manager.maya_SceneManager_utils as Maya_SM_utils
+
+
+
+class Scene_Manager_UI(QtWidgets.QWidget):
+    """ Builds the Scene Manager UI for the importing of assets. """
+
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("Scene Manager")
+        self.project_name = os.getenv('PROJECT_NAME')
+
+        self.ignore_formats = ["mtl"]
+
+    # Top Layout:
+
+        topLayout = QtWidgets.QVBoxLayout()
+        label = QtWidgets.QLabel()
+        font = QtGui.QFont()
+        # Refresh_button = QtWidgets.QPushButton(text="Refresh")
+
+        font.setBold(True)
+        label.setFont(font)
+        label.setText(self.project_name)
+        label.setAlignment(QtCore.Qt.AlignHCenter)
+        topLayout.addWidget(label)
+        # topLayout.addWidget(Refresh_button)
+
+        self.line = QtWidgets.QFrame()
+        self.line.setGeometry(QtCore.QRect(0, 0, 0, 0))
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        topLayout.addWidget(self.line)
+
+
+    # Tabs Layout:
+
+        Tab_group = QtWidgets.QTabWidget()
+        Tab_group.tabBarClicked.connect(self.tab_resize)
+
+        self.layout_Global_Assets = QtWidgets.QVBoxLayout()
+        self.layout_Top_Assets = QtWidgets.QVBoxLayout()
+        self.layout_Shot_Assets = QtWidgets.QVBoxLayout()
+
+        tab_1 = QtWidgets.QWidget()
+        tab_1.setLayout(self.layout_Global_Assets)
+
+        tab_2 = QtWidgets.QWidget()
+        tab_2.setLayout(self.layout_Top_Assets)
+
+        tab_3 = QtWidgets.QWidget()
+        tab_3.setLayout(self.layout_Shot_Assets)
+
+        Tab_group.addTab(tab_1, "Global_Assets")
+        Tab_group.addTab(tab_2, "Top_Assets")
+        Tab_group.addTab(tab_3, "Shot_Assets")
+
+        # Center Tabs.
+        self.setStyleSheet("""QTabWidget::tab-bar {alignment: center;}""")
+
+
+    # Populate Tabs:
+
+        TABS = ["TOP", "SHOT"]
+
+        self.asset_dict = {}
+        self.total_asset_count = {}
+
+        for tab in TABS:
+
+            total_asset_count = 0
+            category = self.return_existing_categories(tab)
+
+            for cat in category[0]:
+
+                self.groupBox = QtWidgets.QGroupBox(cat)
+                self.groupBox.setCheckable(True)
+
+                self.v_layout = QtWidgets.QVBoxLayout()
+                self.groupBox.setLayout(self.v_layout)
+
+                # Populate specific category with all existing assets.
+                row_count = self.populate_assets(cat, category[1], tab)
+
+                # add total count of assets for the Tab.
+                total_asset_count += row_count
+                self.total_asset_count[tab] = total_asset_count
+
+                if tab == "GLOBAL":
+                    self.layout_Global_Assets.addWidget(self.groupBox)
+                if tab == "TOP":
+                    self.layout_Top_Assets.addWidget(self.groupBox)
+                if tab == "SHOT":
+                    self.layout_Shot_Assets.addWidget(self.groupBox)
+
+
+    # Master Layout:
+
+        master_layout = QtWidgets.QVBoxLayout()
+        master_layout.addLayout(topLayout)
+        master_layout.addWidget(Tab_group)
+        self.setLayout(master_layout)
 
 
 
 
+    def populate_assets(self, category, path, tab):
+        """ Populates all assets for specific category. """
+
+        category_path = path + '/' + category
+        category_dir = os.listdir(category_path)
+
+        # Build buttons for single Asset
+        row_index = 0
+
+        for i in category_dir:
+
+            row_index += 1
+            unique_name = tab + "_" + category + "_" + str(i) + "_" + str(row_index)
+
+            self.asset_layout = QtWidgets.QHBoxLayout()
+
+            self.asset_Label = QtWidgets.QLabel(i)
+            self.asset_Label.setAlignment(QtCore.Qt.AlignHCenter)
+            self.asset_type = QtWidgets.QComboBox()
+            self.asset_version = QtWidgets.QComboBox()
+            self.asset_format = QtWidgets.QComboBox()
+            # self.name_space = QtWidgets.QCheckBox("NS", )
+
+            self.Import_button = QtWidgets.QPushButton("Import", clicked=partial(self.button_import, unique_name))
+            self.Refrence_button = QtWidgets.QPushButton("Refrence", clicked=partial(self.button_refrence, unique_name))
+            self.Update_button = QtWidgets.QPushButton("Reload", clicked=partial(self.button_reload, unique_name))
+
+            asset_user = QtWidgets.QLabel("Louis")
+            asset_user.setAlignment(QtCore.Qt.AlignHCenter)
+
+            self.asset_layout.addWidget(self.asset_Label)
+            self.asset_layout.addWidget(self.asset_type)
+            self.asset_layout.addWidget(self.asset_version)
+            self.asset_layout.addWidget(self.asset_format)
+            # self.asset_layout.addWidget(self.name_space)
+
+            self.asset_layout.addWidget(self.Import_button)
+            self.asset_layout.addWidget(self.Refrence_button)
+            self.asset_layout.addWidget(self.Update_button)
+
+            self.asset_layout.addWidget(asset_user)
+
+            self.asset_dict[unique_name] = {"asset_name": i,
+                                            "asset_label": self.asset_Label,
+                                            "asset_type": self.asset_type,
+                                            "asset_version": self.asset_version,
+                                            "asset_format": self.asset_format,
+                                            "asset_path": category_path,
+                                            "category": category,
+                                           }
+
+            # Connect QcomboBoxs
+            self.asset_type.activated.connect(partial(self.TYPE_comboBox_change, unique_name))
+            self.asset_version.activated.connect(partial(self.FORMAT_comboBox_change, unique_name))
+
+            # add data to the comboBox / optionMenus
+            asset_data = self.return_assets(path, category_path + "/" + i)
+
+            self.asset_type.addItems(asset_data[0])
+            self.asset_version.addItems(asset_data[1])
+            self.asset_format.addItems(asset_data[2])
+
+            # Set Button StyleSheet.
+            self.Import_button.setStyleSheet("""color: rgb(0,0,0);background-color: rgb(0, 255, 180);""")
+            self.Refrence_button.setStyleSheet("""color: rgb(0,0,0);background-color: rgb(0, 255, 180);""")
+            self.Update_button.setStyleSheet("""color: rgb(0,0,0);background-color: rgb(0, 255, 180);""")
+
+            # add to layout.
+            self.v_layout.addLayout(self.asset_layout)
+
+        return row_index
+
+
+    def tab_resize(self, tab_index):
+
+        if tab_index == 0: # Globbal_Assets
+            pass
+        if tab_index == 1: # Top_Assets
+            amount = self.total_asset_count["TOP"]
+            y_Size = 150
+            self.setFixedSize(QtCore.QSize(900, y_Size + (80 * amount)))
+
+        if tab_index == 2:  # Shot_Assets
+            amount = self.total_asset_count["SHOT"]
+            y_Size = 150
+            self.setMinimumSize(QtCore.QSize(900, y_Size + (50 * amount)))
 
 
 
-def Scene_Manager_UI():
-    """ Launches the Scene Manager """
 
+    def check_file_exists(self, asset_path):
+        """ Check if file exists. """
 
-
-    def clearOptionMenu(optionMneu_path):
-        """ pass the optionmenu and it will clear all the items """
-
-        # loop through existing menus in the optionMenu and destroy them
-        for item in cmds.optionMenu(optionMneu_path, q=True, ill=True) or []:
-            cmds.deleteUI(item)
-
-
-    def updateAsset(*args):
-        """ Attempts to update the referenced asset - if using a namespace, it wont work. """
-
-        # check version number
-        asset_name = UI_data[args[0]]["asset_name"]
-        asset_base_path = UI_data[args[0]]["asset_path"]
-        catagory = UI_data[args[0]]["catagory"]
-        extension = UI_data[args[0]]["extension"]
-
-        versions_path = args[1]
-        asset_type_path = args[2]
-
-        asset_type = cmds.optionMenu(asset_type_path, query=True, value=True)
-        current_version = cmds.optionMenu(versions_path, query=True, value=True)
-        extension_type = cmds.optionMenu(extension, query=True, value=True)
-
-        path_to_assets_dir = asset_base_path + "/" + asset_type + "/" + current_version
-        asset_path = path_to_assets_dir + "/" + asset_name + "_" + asset_type + "_" + current_version
-        full_asset_path = asset_path + "." + extension_type
-
-        # check if file exists
-        exists = cmds.file(full_asset_path, query=True, exists=True)
-        if exists == True:
-            refNodes = cmds.ls(type="reference")
-            for ref in refNodes:
-
-                if str(asset_name+"_"+asset_type) in str(ref):
-                    print("Updating Reference for: ", asset_name)
-                    cmds.file(full_asset_path, loadReference=ref)
-
-
-
-    def importAsset(*args):
-        """ function to import an asset """
-
-        IMPORT_COLOR_CAM = (0.1, 0.5, 0)
-        IMPORT_COLOR_CHAR = 0, 0.8, 0
-        IMPORT_COLOR_PROP = (0, 0, 0)
-        IMPORT_COLOR_ENV = (0, 0, 0)
-        IMPORT_COLOR_VEH = (0, 0, 0)
-
-
-        button_pushed = cmds.button(args[0], query=True, label=True)
-
-        # check version number
-        asset_name = UI_data[args[0]]["asset_name"]
-        asset_base_path = UI_data[args[0]]["asset_path"]
-        catagory = UI_data[args[0]]["catagory"]
-        extension = UI_data[args[0]]["extension"]
-
-        versions_path = args[1]
-        asset_type_path = args[2]
-
-        asset_type = cmds.optionMenu(asset_type_path, query=True, value=True)
-        current_version = cmds.optionMenu(versions_path, query=True, value=True)
-        extension_type = cmds.optionMenu(extension, query=True, value=True)
-
-        path_to_assets_dir = asset_base_path + "/" + asset_type + "/" + current_version
-        asset_path = path_to_assets_dir + "/" + asset_name + "_" + asset_type + "_" + current_version
-        full_asset_path = asset_path + "." + extension_type
-
-        # check if file exists
-        exists = cmds.file(full_asset_path, query=True, exists=True)
+        print(asset_path)
+        exists = os.path.exists(asset_path)
 
         if exists == False:
-            cmds.confirmDialog(title="Cant find file", message=asset_name + " Does not exist")
-        else:
-            # import / reference action
-            print("Importing: ", full_asset_path)
-            if button_pushed == "Import":
+            self.popUp_message("File Not Found.", "Could not find the path to: \n\n" + str(asset_path))
+            status = False
 
-                # popup for import
-                cmds.textManip(v=True)
-                cmds.headsUpMessage('Imported ' + asset_name + "_" + asset_type + "_" + current_version, time=2.0)
-                cmds.textManip(v=True)
+        elif exists == True:
+            print(asset_path)
+            status = True
 
-                # checks outliner for all existing items
-                before = set(cmds.ls(type="transform"))
-                cmds.file(full_asset_path, i=True, namespace=catagory)
-                # checks outliner for new items
-                after = set(cmds.ls(type="transform"))
-                # compares and gets the difference
-                imported = after - before
+        return status
 
-                if asset_type != "rig":
-                    selection = cmds.ls(imported)
-                    group_name = cmds.group(selection, name=catagory + "_" + asset_name + "_" + current_version)
 
-                    if catagory == "char":
-                        cmds.setAttr(group_name + ".useOutlinerColor", True)
-                        cmds.setAttr(group_name + ".outlinerColor", 1,0,0.7)
-                    elif catagory == "env":
-                        cmds.setAttr(group_name + ".useOutlinerColor", True)
-                        cmds.setAttr(group_name + ".outlinerColor", 0.2, 1, 0.4)
-                    elif catagory == "prop":
-                        cmds.setAttr(group_name + ".useOutlinerColor", True)
-                        cmds.setAttr(group_name + ".outlinerColor", 0.8, 1, 0)
-                    elif catagory == "cam":
-                        cmds.setAttr(group_name + ".useOutlinerColor", True)
-                        cmds.setAttr(group_name + ".outlinerColor", 0.4,1,0.8)
-                    elif catagory == "veh":
-                        cmds.setAttr(group_name + ".useOutlinerColor", True)
-                        cmds.setAttr(group_name + ".outlinerColor", 0.5,1,0.1)
 
 
-            elif button_pushed == "Reference":
-                Namespace_query = (cmds.checkBox(UI_data["Namespace_query"], query=True, value=True))
+    def execute_import(self, action, row_index):
+        """ Executes the import function across DCCs. """
 
-                if Namespace_query == True:
-                    cmds.file(full_asset_path, r=True, namespace=catagory)
-                elif Namespace_query == False:
-                    cmds.file(full_asset_path, r=True, dns=True)
+        selected_asset_data = self.return_selected_asset_path(row_index)
 
+        asset_path = selected_asset_data[0]
+        asset_type = selected_asset_data[2]
+        catagory = selected_asset_data[5]
+        asset_name = selected_asset_data[1]
+        current_version = selected_asset_data[3]
+        NameSpace = selected_asset_data[6]
 
+        exists = self.check_file_exists(asset_path)
 
+        if exists != False:
 
+            DCC = os.getenv("DCC")
 
-    def UpdateVersions(*args):
-        """ updates the versions UI for rigs or geo """
+            if DCC == "Maya":
+                Maya_SM_utils.SCM_import(action, asset_path,
+                                           asset_type, catagory,
+                                           asset_name, current_version, NameSpace)
 
-        button_type = args[0]
-        button_name = args[1]
+            if DCC == "Houdini":
+                pass
 
-        versions_button_path = UI_data[button_type]["version_button"]
-        asset_button_path = UI_data[button_type]["asset_path"]
-        extensions_button = UI_data[button_type]["extensions"]
+            if DCC == "Blender":
+                pass
 
-        current_version = cmds.optionMenu(versions_button_path, query=True, value=True)
-        selected_Asset_path = asset_button_path + "/" + button_name
 
-        # Clear optiopn menu
-        clearOptionMenu(versions_button_path)
 
-        asset_version_count = os.listdir(selected_Asset_path)
 
-        for i in asset_version_count:
+    def button_reload(self, row_index):
+        """ Function for Reload button when clicked. """
+        self.execute_import("Reload", row_index)
 
-            # changes the version option menu to whatever
-            cmds.menuItem(label=i, parent=versions_button_path)
 
-        latet_version = asset_version_count[-1]
 
-        # changes the version option menu to whatever
-        cmds.optionMenu(versions_button_path, edit=True, value=latet_version)
 
-        # update extensions in optionMenu
-# ###
-        list_assets = os.listdir(selected_Asset_path + "/" + latet_version)
-        clearOptionMenu(extensions_button)
-        for asset in list_assets:
-            extention = asset.split(".")[1]
-            if extention != "mtl":
-                cmds.menuItem(label=extention, parent=extensions_button)
+    def button_refrence(self, row_index):
+        """ Function for refrence button when clicked. """
+        self.execute_import("Reference", row_index)
 
 
 
-    def updateExtensions(*args):
-        """ updates the extensions option menu """
 
-        asset_path = args[1]
-        asset_type = args[2]
-        version = args[4]
-        extensions_button = args[3]
+    def button_import(self, row_index):
+        """ Function for import button when clicked. """
+        self.execute_import("Import", row_index)
 
-        type = cmds.optionMenu(asset_type, query=True, value=True)
-        selected_version_path = asset_path + "/" + type + "/" + version
 
-        list_assets = os.listdir(selected_version_path)
 
-        clearOptionMenu(extensions_button)
-        for asset in list_assets:
-            extention = asset.split(".")[1]
-            if extention != "mtl":
-                cmds.menuItem(label=extention, parent=extensions_button)
 
+    def popUp_message(self, title, message):
+        """ PopUp message to use for errors etc. """
 
+        dlg = QtWidgets.QMessageBox(self)
+        dlg.setWindowTitle(title)
+        dlg.setText(message)
+        button = dlg.exec_()
 
-    def buildUI_Catagories(UI_data, catagory, TAB):
-        """ builds the UI catagories / char / env / prop / veh """
+        if button == QtWidgets.QMessageBox.Ok:
+            pass
 
-        # cmds.columnLayout(adjustableColumn=True)
-        if catagory == "char":
-            closed = False
-        else:
-            closed = True
 
-        cmds.frameLayout(label=catagory, cll=closed, cl=True, mh=10)
-        # cmds.rowColumnLayout(numberOfColumns=10, columnAttach=(1, 'left', 0), columnWidth=[(10, 100), (2, 250)])
 
-        cmds.gridLayout(numberOfColumns=7, cellWidthHeight=(100, 20))
 
-        if TAB == "TOP_ASSETS":
-            # gets the list of items for this specific asset type
-            populate_Asset_TABS(UI_data, catagory, TAB)
-            cmds.setParent(top_assets_row)
-        elif TAB == "SHOT_ASSETS":
-            populate_Asset_TABS(UI_data, catagory, TAB)
-            cmds.setParent(shot_assets_row)
+    def return_selected_asset_path(self, row_index):
+        """ Function for import button when clicked. """
 
+        dict = self.return_dict(row_index)
 
+        asset_path = dict["asset_path"]
+        asset_name = dict["asset_name"]
+        asset_type = dict["asset_type"].currentText()
+        asset_version = dict["asset_version"].currentText()
+        asset_format = dict["asset_format"].currentText()
+        category = dict["category"]
+        NameSpace = dict["NameSpace"]
 
-    def populate_Asset_TABS(UI_data, catagory, TAB):
-        """ Populates the TOP / SHOT tabs with existing assets from the current project """
+        file_name = asset_name + "_" + asset_type + "_" + asset_version + "." + asset_format
+        path = asset_path + "/" + asset_name + "/" + asset_type + "/" + asset_version + "/" + file_name
 
-        if TAB == "TOP_ASSETS":
-            TOP_ASSETS = os.getenv("TOP_ASSETS")
-            catagory_path = (TOP_ASSETS + "/" + catagory)
-        elif TAB == "SHOT_ASSETS":
-            SHOT_ASSETS = os.getenv("SHOT_ASSETS")
-            catagory_path = (SHOT_ASSETS + "/" + catagory)
+        data = [path, asset_name, asset_type, asset_version, asset_format, category, NameSpace]
 
-        try:
-            for asset in os.listdir(catagory_path):
+        return data
 
 
-                asset_path = catagory_path + "/" + asset
 
-                #cmds.text(label="-")
-                cmds.text(label=asset)
 
-                type_button = cmds.optionMenu(label="|", changeCommand=UpdateVersions)
-                cmds.optionMenu(type_button, e=True, changeCommand=partial(UpdateVersions, type_button))
+    def return_dict(self, row_index):
+        """ Return an object from specific row in the UI. """
 
-                for type in os.listdir(asset_path):
-                    cmds.menuItem(label=type)
+        # Returns asset info from row.
+        asset_name = self.asset_dict[row_index]["asset_name"]
+        asset_type = self.asset_dict[row_index]["asset_type"]
+        asset_version = self.asset_dict[row_index]["asset_version"]
+        asset_format = self.asset_dict[row_index]["asset_format"]
+        asset_path = self.asset_dict[row_index]["asset_path"]
+        category = self.asset_dict[row_index]["category"]
+        NameSpace = False
 
-                #cmds.text(label="  ")
+        return {
+                "asset_name":asset_name,
+                "asset_type":asset_type,
+                "asset_version":asset_version,
+                "asset_format":asset_format,
+                "asset_path":asset_path,
+                "category": category,
+                "NameSpace": NameSpace
+                }
 
-    # version numbers to the versions UI
-                versions = cmds.optionMenu(changeCommand=updateExtensions)
-                #cmds.separator(style='in', hr=False)
 
-                asset_type_menu = cmds.optionMenu(type_button, query=True, value=True)
 
-                asset_type = asset_path + "/" + asset_type_menu
 
-                asset_version_count = os.listdir(asset_type)
-                latest_asset_version = asset_version_count[-1]
+    def strip_extensions(self, return_formats):
+        """ Strips the extension from the names. """
 
-                for i in asset_version_count:
-                    cmds.menuItem(label=i)
+        ext_list = []
 
-                cmds.optionMenu(versions, edit=True, value=latest_asset_version)
-                version = cmds.optionMenu(versions, query=True, value=True)
+        for f in return_formats:
+            ext = f.split(".")[1]
 
-    # Extensions optionMenu
-                full_asset_version_path = asset_type + "/" + version
-                extensions_button = cmds.optionMenu()
-                for ext in os.listdir(full_asset_version_path):
-                    extension = ext.split(".")[1]
-                    if extension != "mtl":
-                        cmds.menuItem(extension)
+            if ext not in self.ignore_formats:
+                ext_list.append(ext)
 
-                #cmds.text(label=" | ")
+        return ext_list
 
-    # Import Button
-                impport_button = cmds.button(label="Import", bgc=(0.65, 1, 0))
-                UI_data[impport_button] = {"asset_name":asset, "asset_path":asset_path, "catagory":catagory, "extension":extensions_button}
-                cmds.button(impport_button, e=True, c=partial(importAsset, impport_button, versions, type_button))
 
-    # Refrence Button
-                refrence_button = cmds.button(label="Reference", bgc=(0.65, 1, 0))
-                UI_data[refrence_button] = {"asset_name":asset, "asset_path":asset_path, "catagory":catagory, "extension":extensions_button}
-                cmds.button(refrence_button, e=True, c=partial(importAsset, refrence_button, versions, type_button))
 
-    # Update Button
-                update_button = cmds.button(label="Update", bgc=(0.65, 1, 0))
-                UI_data[update_button] = {"asset_name":asset, "asset_path":asset_path, "catagory":catagory, "extension":extensions_button}
-                cmds.button(update_button, e=True, c=partial(updateAsset, update_button, versions, type_button))
 
+    def return_asset(self, row_index, comboBox):
+        """ Returns QcomboBox object from specific row, to query it. """
 
-                UI_data[type_button] = {"asset": asset, "version_button": versions, "asset_path" : asset_path, "extensions":extensions_button}
+        return self.return_dict(row_index)[comboBox]
 
-                cmds.optionMenu(versions, e=True, changeCommand=partial(updateExtensions, versions, asset_path, type_button, extensions_button))
 
 
 
+    def FORMAT_comboBox_change(self, row_index, type):
+        """ ComboBox change function to update the versions and formats comboBox
+            based on what is in the directories. """
 
+        T_comboBox_obj = self.return_asset(row_index, "asset_type").currentText()
+        V_comboBox_obj = self.return_asset(row_index, "asset_version").currentText()
+        F_comboBox_obj = self.return_asset(row_index, "asset_format")
 
-        except Exception as e:
-            print(e)
-            cmds.confirmDialog(title='Error populating Scene Manager', message='Error: ' + str(e))
+        asset_name = self.return_asset(row_index, "asset_name")
+        asset_path = self.return_asset(row_index, "asset_path")
 
-    def reloadUI(*args):
-        """ Reloads the UI """
+        path = asset_path + "/" + asset_name + "/" + T_comboBox_obj + "/" + V_comboBox_obj
+        return_formats = os.listdir(path)
+        ext_list = self.strip_extensions(return_formats)
 
-        cmds.evalDeferred(Scene_Manager_UI)
+        # Update versions comboBox
+        F_comboBox_obj.clear()
+        F_comboBox_obj.addItems(ext_list)
 
 
 
 
+    def TYPE_comboBox_change(self, row_index, type):
+        """ ComboBox change function to update the versions and formats comboBox
+            based on what is in the directories. """
 
-### MAIN UI
+        T_comboBox_obj = self.return_asset(row_index, "asset_type").currentText()
+        V_comboBox_obj = self.return_asset(row_index, "asset_version")
 
-    project_name = os.getenv('PROJECT_NAME')
-    Title = "PipeDreams"
+        asset_name = self.return_asset(row_index, "asset_name")
+        asset_path = self.return_asset(row_index, "asset_path")
 
-    # all UI button paths etc go into this dictionary.
-    UI_data = {}
+        path = asset_path + "/" + asset_name + "/" + T_comboBox_obj
+        return_versions = os.listdir(path)
 
-    if cmds.window("Scene_Manager", exists=True):
-        cmds.deleteUI("Scene_Manager")
+        # Update versions comboBox
+        V_comboBox_obj.clear()
+        V_comboBox_obj.addItems(reversed(return_versions))
 
-    cmds.window(title="Scene_Manager", widthHeight=(750, 450), menuBar=True)
+        self.FORMAT_comboBox_change(row_index, type)
 
-    cmds.menu(label=Title)
-    cmds.menuItem(subMenu=True, label='test1')
-    cmds.menuItem(label='test2')
 
-    cmds.setParent('..', menu=True)
 
-    cmds.menuItem(divider=True)
 
-    cmds.radioMenuItemCollection()
-    cmds.menuItem(label='Yes', radioButton=False)
-    cmds.menuItem(label='Maybe', radioButton=False)
-    cmds.menuItem(label='No', radioButton=True)
-    cmds.menuItem(divider=True)
-    cmds.menuItem(label='Top', checkBox=True)
-    cmds.menuItem(label='Middle', checkBox=False)
-    cmds.menuItem(label='Bottom', checkBox=True)
-    cmds.menuItem(divider=True)
-    cmds.menuItem(label='Option')
-    cmds.menuItem(optionBox=True)
+    def return_existing_categories(self, tab):
+        """ Returns the existing ca """
 
-    # Importer Dropdown
-    cmds.columnLayout(adjustableColumn=True)
-    cmds.frameLayout(label='importer', cll=True, mh=10, )
-    cmds.rowColumnLayout(numberOfColumns=2, columnAttach=(1, 'right', 0), columnWidth=[(10, 100), (2, 250)])
+        asset_tab = tab + "_ASSETS"
 
-    cmds.button(label="Refresh", command=reloadUI)
-    Namespace_query = cmds.checkBox(label="Namespace")
-    UI_data["Namespace_query"] = Namespace_query
-    cmds.setParent('..')
+        existing_ASSETS_path = os.getenv(asset_tab)
+        existing_categories = os.listdir(existing_ASSETS_path)
 
-    # Tab Setup
-    form = cmds.formLayout()
-    tabs = cmds.tabLayout(innerMarginWidth=20, innerMarginHeight=20)
-    cmds.formLayout(form, edit=True,
-                    attachForm=((tabs, 'top', 0), (tabs, 'left', 10), (tabs, 'bottom', 0), (tabs, 'right', 0)))
+        return existing_categories, existing_ASSETS_path
 
 
 
-    ##                      Tab 1                       ###
 
-    #   main
-    main = cmds.rowColumnLayout(numberOfColumns=1, adjustableColumn=True)
+    def return_assets(self, path, asset_path):
+        """ Returns the list of assets for the specific category. """
 
-    cmds.columnLayout(adjustableColumn=True)
-    cmds.frameLayout(label='tmp', cll=True, cl=True, mh=10)
-    cmds.rowColumnLayout(numberOfColumns=7, columnAttach=(1, 'right', 0), columnWidth=[(10, 100), (2, 250)])
+        asset_types = os.listdir(asset_path)
+        versions = os.listdir(asset_path + "/" + asset_types[0])
 
-    cmds.setParent(main)
-    cmds.setParent('..')
+        files_formats = os.listdir(asset_path + "/" + asset_types[0] + "/" + versions[-1])
+        formats = self.strip_extensions(files_formats)
 
+        print(asset_path, files_formats)
 
+        return asset_types, reversed(versions), formats
 
-    ##                      Tab 2                       ###
-
-    #   TOP_ASSETS
-    top_assets_row = cmds.rowColumnLayout(numberOfColumns=1, adjustableColumn=True)
-
-    cmds.separator(height=20, style='in')
-    cmds.text(label=project_name)
-    cmds.separator(height=20, style='in')
-
-    # loops through all the asset types dirs | char, env, veh, prop etc
-    for cat in os.listdir(os.getenv("TOP_ASSETS")):
-        buildUI_Catagories(UI_data, cat, "TOP_ASSETS")
-        cmds.setParent(top_assets_row)
-
-    cmds.setParent('..')
-
-
-
-    ##                      Tab 3                       ###
-
-    #   SHOT_ASSETS
-    shot_assets_row = cmds.rowColumnLayout(numberOfColumns=1, adjustableColumn=True)
-    cmds.text(label=project_name)
-
-    cmds.columnLayout(adjustableColumn=True)
-    cmds.rowColumnLayout(numberOfColumns=6)
-    cmds.separator( height=10, style='in' )
-
-    # import_SRT_checkBox = cmds.checkBox(label="Import under Scene_SRT", value=True)
-    # test_1 = cmds.checkBox(label="Test", value=False)
-
-    cmds.separator( height=10, style='in' )
-    cmds.setParent(shot_assets_row)
-
-    # loops through all the asset types dirs | char, env, veh, prop etc
-    for cat in os.listdir(os.getenv("SHOT_ASSETS")):
-        buildUI_Catagories(UI_data, cat, "SHOT_ASSETS")
-        cmds.setParent(shot_assets_row)
-
-
-    cmds.setParent('..')
-    cmds.setParent(shot_assets_row)
-    cmds.setParent(shot_assets_row)
-
-    test = cmds.tabLayout(tabs, edit=True, tabLabel=((main, 'Main'), (shot_assets_row, 'Shot Assets'), (top_assets_row, "Top_Assets")))
-    cmds.tabLayout(test, selectTab=top_assets_row, edit=True)
-    cmds.setParent(shot_assets_row)
-
-
-    cmds.showWindow()
 
 
 
 if __name__ == "__main__":
-    Scene_Manager_UI()
+
+    #app = QtWidgets.QApplication()
+    Scene_Manager_UI = Scene_Manager_UI()
+    Scene_Manager_UI.show()
+    #app.exec_()
