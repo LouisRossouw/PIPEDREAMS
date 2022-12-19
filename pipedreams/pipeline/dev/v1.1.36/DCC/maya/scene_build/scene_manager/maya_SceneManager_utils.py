@@ -2,7 +2,6 @@ import maya.cmds as cmds
 
 
 
-
 def SCM_import(action, asset_path,asset_type,
                catagory, asset_name, current_version, NameSpace):
     """ Function for the import / reference / reload button in Maya Scene Manager."""
