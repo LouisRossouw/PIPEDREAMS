@@ -155,7 +155,7 @@ def composit_sequence(image_sequence_dir, json_manifest_path, version):
             position_height = (scaled_resolution[1] - img_size_height) / 2
             blank_img.paste(img, (0,int(position_height)))
             # Add logo | (image size / 2) - (logo size / 2) =  center point for logo
-            blank_img.paste(img_logo, (int(img_size_width / 2) - int((logo_size_width / 2)), 970))
+            #blank_img.paste(img_logo, (int(img_size_width / 2) - int((logo_size_width / 2)), 970))
 
             draw = ImageDraw.Draw(blank_img, "RGBA")
             font = ImageFont.truetype("arial.ttf", FONT_SIZE)
