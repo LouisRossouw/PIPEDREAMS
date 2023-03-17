@@ -463,13 +463,13 @@ def Export_Manager():
         """ filters and exports selected assets """
 
         if query_format_check == "mb":
-            export_mayaBinary(save_file)
+            export_mayaBinary(save_file + ".mb")
         elif query_format_check == "abc":
             exportAlembic(save_file, query_start, query_end, query_category)
         elif query_format_check == "fbx":
             exportFBX(save_file)
         elif query_format_check == "obj":
-            export_OBJ(save_file)
+            export_OBJ(save_file + ".obj")
 
 
 
