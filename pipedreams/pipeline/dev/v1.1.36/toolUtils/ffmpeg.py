@@ -1,7 +1,7 @@
 import os
 import shutil
 from PIL import Image
-
+import subprocess
 
 # FFMPEG
 
@@ -23,7 +23,12 @@ def png_to_vid(path_to_png_sequence_input,
     path_out = path_to_video_output + '.mp4'
 
     # uses ffmpeg to convert png seq to mp4
-    os.system('ffmpeg -i ' + str(path) + ' -vcodec libx264 -crf 1 -r ' + str(FPS) + ' -pix_fmt yuv420p ' + str(path_out))
+    #os.system('ffmpeg -i ' + str(path) + ' -vcodec libx264 -crf 1 -r ' + str(FPS) + ' -pix_fmt yuv420p ' + str(path_out))
+
+    # uses ffmpeg to convert png seq to mp4
+    #subprocess.call('ffmpeg -i '+ str('"' + path + '"') + ' -vcodec libx264 -crf 1 -r ' + str(FPS) + ' -pix_fmt yuv420p '+ str('"' + path_out + '"'))
+    command = ["ffmpeg", "-i", path, "-vcodec", "libx264", "-crf", "1", "-r", FPS, "-pix_fmt", "yuv420p", path_out]
+    subprocess.call(command)
 
 
 def composite_img(png_name, png_save_name, bg_color):
