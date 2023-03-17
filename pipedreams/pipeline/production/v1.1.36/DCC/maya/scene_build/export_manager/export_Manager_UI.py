@@ -5,13 +5,14 @@ import random
 
 import maya.cmds as cmds
 from functools import partial
+import pymel.core as pm
 
 
 # local app/lib imports
 import scene_build.export_manager.export as export
 import scene_build.export_manager.export_utils as utils
 
-
+pm.loadPlugin("fbxmaya")
 
 def Export_Manager():
 
@@ -433,13 +434,13 @@ def Export_Manager():
 
 
         if query_format_check == "mb":
-            export_mayaBinary(save_file)
+            export_mayaBinary(save_file + ".mb")
         elif query_format_check == "abc":
             exportAlembic(save_file, query_start, query_end, query_category)
         elif query_format_check == "fbx":
-            print("")
+            exportFBX(save_file)
         elif query_format_check == "obj":
-            export_OBJ(save_file)
+            export_OBJ(save_file + ".obj")
 
 
 
@@ -500,10 +501,13 @@ def Export_Manager():
 
 
 
+
     def export_mayaBinary(save_file):
         """ This function exports selected as a maya scene file """
 
         cmds.file(save_file, force=True, options='v=0', type='mayaBinary', preserveReferences=True, exportSelected=True)
+
+
 
 
     def export_OBJ(save_file):
@@ -511,6 +515,17 @@ def Export_Manager():
 
         cmds.file(save_file, force=True, options='v=0', type='OBJexport', preserveReferences=True, exportSelected=True)
 
+
+
+
+    def exportFBX(save_file):
+        """ Export FBX. """
+
+        selection_list = cmds.ls(selection=True)
+
+        for obj in selection_list:
+            cmds.select(obj)
+            pm.mel.FBXExport(f=save_file)
 
 
 
